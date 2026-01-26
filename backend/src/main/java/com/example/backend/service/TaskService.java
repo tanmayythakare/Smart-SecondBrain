@@ -27,4 +27,29 @@ public class TaskService {
     public List<Task> getTasks(User user) {
         return taskRepository.findByUser(user);
     }
+    public Task updateTask(Long taskId, String title, User user) {
+
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new RuntimeException("Task not found"));
+
+        if (!task.getUser().getId().equals(user.getId())) {
+            throw new RuntimeException("Unauthorized access to task");
+        }
+
+        task.setTitle(title);
+        return taskRepository.save(task);
+    }
+
+    public void deleteTask(Long taskId, User user) {
+
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new RuntimeException("Task not found"));
+
+        if (!task.getUser().getId().equals(user.getId())) {
+            throw new RuntimeException("Unauthorized access to task");
+        }
+
+        taskRepository.delete(task);
+    }
+
 }

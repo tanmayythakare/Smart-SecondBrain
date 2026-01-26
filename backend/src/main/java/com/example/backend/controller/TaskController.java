@@ -32,6 +32,19 @@ public class TaskController {
         User user = getCurrentUser();
         return taskService.getTasks(user);
     }
+    @PutMapping("/{id}")
+    public Task updateTask(@PathVariable Long id,
+                           @RequestBody TaskRequest request) {
+        User user = getCurrentUser();
+        return taskService.updateTask(id, request.getTitle(), user);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteTask(@PathVariable Long id) {
+        User user = getCurrentUser();
+        taskService.deleteTask(id, user);
+    }
+
 
     private User getCurrentUser() {
         Authentication authentication =
