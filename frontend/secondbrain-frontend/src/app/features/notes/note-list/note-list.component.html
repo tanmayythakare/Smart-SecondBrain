@@ -1,38 +1,143 @@
 <div class="page">
   <h2>Notes</h2>
 
-  <div class="card note-editor">
+  <!-- Search Bar -->
+  <div style="margin-bottom: 2rem;">
     <input
       type="text"
-      placeholder="Search notes..."
-      [(ngModel)]="search"
-      (input)="onSearch()"
+      placeholder="🔍 Search notes..."
+      [(ngModel)]="searchQuery"
+      style="max-width: 600px;"
     />
-
-    <input type="text" placeholder="Title" [(ngModel)]="title" />
-
-    <textarea placeholder="Write your note..." [(ngModel)]="content">
-    </textarea>
-
-    <button (click)="addNote()">Add Note</button>
   </div>
 
-  <div class="note-card card" *ngFor="let note of notes">
-  <h4>{{ note.title }}</h4>
-  <p>{{ note.content }}</p>
+  <!-- Note Editor -->
+  <div class="note-editor">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+      <h4 style="margin: 0; color: var(--gray-700);">
+        {{ editingNote ? '✏️ Edit Note' : '➕ Create New Note' }}
+      </h4>
+      <button 
+        *ngIf="editingNote" 
+        class="secondary" 
+        (click)="cancelEdit()"
+        style="padding: 0.5rem 1rem; font-size: 0.875rem;"
+      >
+        ✕ Cancel
+      </button>
+    </div>
+    
+    <input
+      type="text"
+      placeholder="Note title"
+      [(ngModel)]="noteTitle"
+    />
+    
+    <textarea
+      placeholder="Write your note here..."
+      [(ngModel)]="noteContent"
+    ></textarea>
+    
+    <button (click)="addOrUpdateNote()" [disabled]="!noteTitle.trim() || !noteContent.trim()">
+      {{ editingNote ? '💾 Update Note' : '➕ Add Note' }}
+    </button>
+  </div>
 
-  <div class="note-actions">
-    <button class="secondary" (click)="editNote(note)">Edit</button>
-    <button class="danger" (click)="deleteNote(note)">Delete</button>
-    <button (click)="linkNote(note)">Link</button>
+  <!-- Notes List -->
+  <div *ngIf="filteredNotes && filteredNotes.length > 0">
+    <h3 style="margin-bottom: 1.5rem; color: var(--gray-700); font-size: 1.25rem; font-weight: 600;">
+      All Notes ({{ filteredNotes.length }})
+    </h3>
+    
+    <div *ngFor="let note of filteredNotes" class="note-card card">
+      <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.5rem;">
+        <h4 style="margin: 0;">{{ note.title }}</h4>
+        <span style="font-size: 0.75rem; color: var(--gray-400); font-weight: normal;">ID: {{ note.id }}</span>
+      </div>
+      <p>{{ note.content }}</p>
+      
+      <div class="note-actions">
+        <button class="secondry" (click)="editNote(note)">✏️ Edit</button>
+        <button (click)="openLinkModal(note)">🔗 Link</button>
+        <button class="danger" (click)="toggleDeleteConfirm(note)">
+          🗑️ Delete
+        </button>
+      </div>
+
+      <!-- Inline Delete Confirmation -->
+      <div *ngIf="isDeleteConfirmVisible(note)" 
+           style="margin-top: 1rem; padding: 1rem; background: #fee2e2; border-radius: var(--radius-md); border: 1px solid #fecaca;">
+        <p style="margin: 0 0 0.75rem; color: #991b1b; font-weight: 500;">
+          ⚠️ Are you sure you want to delete "{{ note.title }}"?
+        </p>
+        <div style="display: flex; gap: 0.5rem;">
+          <button class="danger" (click)="confirmDelete(note)" style="padding: 0.5rem 1rem; font-size: 0.875rem;">
+            Yes, Delete
+          </button>
+          <button class="secondary" (click)="cancelDelete(note)" style="padding: 0.5rem 1rem; font-size: 0.875rem;">
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!filteredNotes || filteredNotes.length === 0" style="text-align: center; padding: 3rem; color: var(--gray-400);">
+    <p style="font-size: 1.125rem; margin-bottom: 0.5rem;">📝 No notes found</p>
+    <p style="font-size: 0.875rem; color: var(--gray-500);">
+      {{ searchQuery ? 'Try a different search term' : 'Create your first note above!' }}
+    </p>
   </div>
 </div>
 
+<!-- Link Notes Modal -->
+<div *ngIf="showLinkModal" 
+     style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); display: flex; align-items: center; justify-content: center; z-index: 1000;"
+     (click)="closeLinkModal()">
+  
+  <div class="card" 
+       style="max-width: 500px; width: 90%; padding: 2rem; margin: 1rem;"
+       (click)="$event.stopPropagation()">
+    
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+      <h3 style="margin: 0; font-size: 1.5rem; color: var(--gray-900);">🔗 Link Notes</h3>
+      <button class="secondary" (click)="closeLinkModal()" style="padding: 0.5rem 0.75rem;">✕</button>
+    </div>
 
-  <div *ngIf="backlinks.length">
-    <small>Referenced by:</small>
-    <ul>
-      <li *ngFor="let b of backlinks">{{ b.title }}</li>
-    </ul>
+    <p style="color: var(--gray-600); margin-bottom: 1rem;">
+      Link "<strong>{{ linkingNote?.title }}</strong>" with another note
+    </p>
+
+    <div style="margin-bottom: 1rem;">
+      <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: var(--gray-700);">
+        Target Note ID
+      </label>
+      <input
+        type="number"
+        placeholder="Enter note ID (e.g., 123)"
+        [(ngModel)]="linkTargetId"
+        style="width: 100%;"
+      />
+    </div>
+
+    <!-- Available Notes Reference -->
+    <div style="margin-bottom: 1.5rem; padding: 1rem; background: var(--gray-100); border-radius: var(--radius-md); max-height: 200px; overflow-y: auto;">
+      <p style="margin: 0 0 0.75rem; font-size: 0.875rem; font-weight: 600; color: var(--gray-700);">
+        Available Notes:
+      </p>
+      <div *ngFor="let n of notes" style="font-size: 0.875rem; color: var(--gray-600); margin-bottom: 0.25rem;">
+        <strong>ID {{ n.id }}:</strong> {{ n.title }}
+      </div>
+    </div>
+
+    <div style="display: flex; gap: 0.75rem; justify-content: flex-end;">
+      <button class="secondary" (click)="closeLinkModal()">
+        Cancel
+      </button>
+      <button (click)="linkNotes()" [disabled]="!linkTargetId">
+        🔗 Link Notes
+      </button>
+    </div>
   </div>
 </div>

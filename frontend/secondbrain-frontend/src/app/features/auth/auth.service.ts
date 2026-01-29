@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 interface LoginResponse {
   token: string;
@@ -12,7 +13,7 @@ interface LoginResponse {
 })
 export class AuthService {
 
-  private API_URL = 'http://localhost:8080/api/auth';
+  private API_URL = `${environment.apiUrl}/auth`;
 
   constructor(private http: HttpClient) {}
 
@@ -22,17 +23,12 @@ export class AuthService {
     { username, password }
   );
 }
-
-
-
   saveToken(token: string): void {
-    console.log('Saving token:', token);
     localStorage.setItem('token', token);
   }
 
   getToken(): string | null {
   const token = localStorage.getItem('token');
-  console.log('READING TOKEN FROM STORAGE:', token); // 👈 ADD THIS
   return token;
 }
 
