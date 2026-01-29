@@ -21,14 +21,18 @@ public class AuthService {
     private final BCryptPasswordEncoder passwordEncoder;
 
 
-    public AuthService(UserRepository userRepository,
-            AuthenticationManager authenticationManager,
-            JwtUtil jwtUtil) {
-			this.userRepository = userRepository;
-			this.authenticationManager = authenticationManager;
-			this.jwtUtil = jwtUtil;
-			this.passwordEncoder = new BCryptPasswordEncoder();
+    public AuthService(
+    	    UserRepository userRepository,
+    	    AuthenticationManager authenticationManager,
+    	    JwtUtil jwtUtil,
+    	    BCryptPasswordEncoder passwordEncoder
+    	) {
+    	    this.userRepository = userRepository;
+    	    this.authenticationManager = authenticationManager;
+    	    this.jwtUtil = jwtUtil;
+    	    this.passwordEncoder = passwordEncoder;
     	}
+
 
 
 

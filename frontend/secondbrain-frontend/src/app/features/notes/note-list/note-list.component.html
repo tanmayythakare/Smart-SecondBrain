@@ -1,0 +1,38 @@
+<div class="page">
+  <h2>Notes</h2>
+
+  <div class="card note-editor">
+    <input
+      type="text"
+      placeholder="Search notes..."
+      [(ngModel)]="search"
+      (input)="onSearch()"
+    />
+
+    <input type="text" placeholder="Title" [(ngModel)]="title" />
+
+    <textarea placeholder="Write your note..." [(ngModel)]="content">
+    </textarea>
+
+    <button (click)="addNote()">Add Note</button>
+  </div>
+
+  <div class="note-card card" *ngFor="let note of notes">
+  <h4>{{ note.title }}</h4>
+  <p>{{ note.content }}</p>
+
+  <div class="note-actions">
+    <button class="secondary" (click)="editNote(note)">Edit</button>
+    <button class="danger" (click)="deleteNote(note)">Delete</button>
+    <button (click)="linkNote(note)">Link</button>
+  </div>
+</div>
+
+
+  <div *ngIf="backlinks.length">
+    <small>Referenced by:</small>
+    <ul>
+      <li *ngFor="let b of backlinks">{{ b.title }}</li>
+    </ul>
+  </div>
+</div>

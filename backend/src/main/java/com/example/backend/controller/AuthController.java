@@ -23,7 +23,7 @@ public class AuthController {
     public void register(@RequestBody RegisterRequest request) {
         authService.register(request);
     }
-    @PostMapping("login")
+    @PostMapping("/login")
     public AuthResponse login(@RequestBody LoginRequest request) {
     	
     	String token=authService.login(

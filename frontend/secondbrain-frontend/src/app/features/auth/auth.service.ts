@@ -16,15 +16,13 @@ export class AuthService {
 
   constructor(private http: HttpClient) {}
 
-  login(username: string, password: string) {
-  console.log('LOGIN REQUEST PAYLOAD:', { username, password });
-
-  return this.http.post<any>(
+  login(username: string, password: string): Observable<LoginResponse> {
+  return this.http.post<LoginResponse>(
     `${this.API_URL}/login`,
-    { username, password },
-    { observe: 'response' } 
+    { username, password }
   );
 }
+
 
 
   saveToken(token: string): void {

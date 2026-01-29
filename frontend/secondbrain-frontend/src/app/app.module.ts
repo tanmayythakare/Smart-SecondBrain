@@ -7,11 +7,15 @@ import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { JwtInterceptor } from './core/interceptors/jwt.interceptor';
 import { TaskListComponent } from './features/tasks/task-list/task-list.component';
 import { FormsModule } from '@angular/forms';
+import { NoteListComponent } from './features/notes/note-list/note-list.component';
+import { NoteGraphComponent } from './features/notes/note-graph/note-graph.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    TaskListComponent
+    TaskListComponent,
+    NoteListComponent,
+    NoteGraphComponent
   ],
   imports: [
     BrowserModule,

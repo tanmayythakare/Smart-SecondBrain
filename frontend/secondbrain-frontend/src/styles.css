@@ -1,1 +1,230 @@
-/* You can add global styles to this file, and also import other style files */
+/* Global reset */
+body {
+  margin: 0;
+  font-family: Inter, Arial, sans-serif;
+  background: #f7f8fa;
+  color: #222;
+}
+
+/* Layout */
+.app-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+/* Navigation */
+.top-nav {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  padding: 12px 24px;
+  background: #ffffff;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.top-nav a {
+  text-decoration: none;
+  color: #444;
+  font-weight: 500;
+}
+
+.top-nav a.active {
+  color: #1976d2;
+}
+
+.top-nav button {
+  margin-left: auto;
+  padding: 6px 12px;
+  border: none;
+  background: #1976d2;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.page h2 {
+  margin-bottom: 16px;
+}
+
+.task-input {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.task-input input {
+  flex: 1;
+  padding: 8px;
+}
+
+.task-list {
+  list-style: none;
+  padding: 0;
+}
+
+.task-item {
+  background: white;
+  padding: 12px;
+  margin-bottom: 8px;
+  border-radius: 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.task-actions button {
+  margin-left: 6px;
+}
+.graph-wrapper {
+  background: white;
+  border-radius: 8px;
+  padding: 12px;
+  height: 600px;
+}
+
+.graph-canvas {
+  width: 100%;
+  height: 100%;
+}
+
+.hint {
+  color: #666;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+.graph-canvas canvas {
+  pointer-events: auto;
+}
+.reset-btn {
+  margin-bottom: 8px;
+  cursor: pointer;
+  position: relative;
+  z-index: 10;
+  font-size: 13px;
+  padding: 4px 8px;
+  opacity: 0.8;
+}
+
+.reset-btn:hover {
+  opacity: 1;
+}
+
+.graph-wrapper {
+  position: relative;
+  height: 600px;
+}
+
+.graph-canvas {
+  width: 100%;
+  height: 100%;
+}
+button {
+  padding: 6px 14px;
+  border-radius: 4px;
+  border: none;
+  background: #1976d2;
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+}
+button:hover {
+  background: #125ea7;
+}
+button.secondary {
+  background: #e0e0e0;
+  color: #333;
+}
+
+button.danger {
+  background: #d32f2f;
+}
+
+button.danger:hover {
+  background: #b71c1c;
+}
+button {
+  padding: 6px 14px;
+  border-radius: 4px;
+  border: none;
+  background: #1976d2;
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #125ea7;
+}
+
+button.secondary {
+  background: #e0e0e0;
+  color: #333;
+}
+
+button.danger {
+  background: #d32f2f;
+}
+
+button.danger:hover {
+  background: #b71c1c;
+}
+h2 {
+  font-size: 26px;
+  margin-bottom: 12px;
+}
+
+h4 {
+  margin: 0 0 6px;
+}
+
+input, textarea {
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+
+textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.page {
+  margin-top: 12px;
+}
+.note-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 520px;
+  margin-bottom: 32px;
+}
+.note-editor textarea {
+  min-height: 120px;
+}
+.note-card {
+  max-width: 700px;
+}
+
+.note-actions {
+  margin-top: 8px;
+  display: flex;
+  gap: 8px;
+}
+.note-card {
+  max-width: 700px;
+}
+
+.note-card h4 {
+  margin-bottom: 4px;
+}
+
+.note-card p {
+  color: #444;
+  margin-bottom: 12px;
+}
+
+.note-actions {
+  display: flex;
+  gap: 8px;
+}

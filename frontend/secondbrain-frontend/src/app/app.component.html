@@ -1,2 +1,10 @@
-<button (click)="logout()">Logout</button>
-<router-outlet></router-outlet>
+<nav *ngIf="!isLoginPage()" class="top-nav">
+  <a routerLink="/tasks" routerLinkActive="active">Tasks</a>
+  <a routerLink="/notes" routerLinkActive="active">Notes</a>
+  <a routerLink="/graph" routerLinkActive="active">Graph</a>
+  <button (click)="logout()">Logout</button>
+</nav>
+
+<div class="app-container">
+  <router-outlet></router-outlet>
+</div>
