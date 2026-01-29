@@ -42,20 +42,16 @@
       </div>
 
       <!-- DELETE CONFIRMATION -->
-      <div *ngIf="isDeleteConfirmVisible(task)" 
-           style="margin-top: 1rem; padding: 1rem; background: #fee2e2; border-radius: var(--radius-md); border: 1px solid #fecaca;">
-        <p style="margin: 0 0 0.75rem; color: #991b1b; font-weight: 500;">
-          ⚠️ Delete "{{ task.title }}"?
-        </p>
-        <div style="display: flex; gap: 0.5rem;">
-          <button class="danger" (click)="confirmDelete(task)" style="padding: 0.5rem 1rem; font-size: 0.875rem;">
-            Yes, Delete
-          </button>
-          <button class="secondary" (click)="cancelDelete()" style="padding: 0.5rem 1rem; font-size: 0.875rem;">
-            Cancel
-          </button>
-        </div>
-      </div>
+      <div *ngIf="isDeleteConfirmVisible(task)" class="delete-overlay">
+  <div class="delete-box">
+    <p>⚠️ Delete "{{ task.title }}"?</p>
+    <div class="actions">
+      <button class="danger" (click)="confirmDelete(task)">Yes, Delete</button>
+      <button class="secondary" (click)="cancelDelete()">Cancel</button>
+    </div>
+  </div>
+</div>
+
     </li>
   </ul>
 

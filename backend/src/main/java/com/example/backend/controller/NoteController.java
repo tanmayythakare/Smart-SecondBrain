@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import com.example.backend.repository.UserRepository;
 
 import com.example.backend.model.Note;
 import com.example.backend.model.User;
@@ -15,10 +16,13 @@ import com.example.backend.service.NoteService;
 public class NoteController {
 
     private final NoteService noteService;
+    private final UserRepository userRepository;
 
-    public NoteController(NoteService noteService) {
+    public NoteController(NoteService noteService, UserRepository userRepository) {
         this.noteService = noteService;
+        this.userRepository = userRepository;
     }
+
     @GetMapping("/search")
     public List<Note> searchNotes(@RequestParam String q) {
       User user = getCurrentUser();
@@ -61,8 +65,11 @@ public class NoteController {
 
 
     private User getCurrentUser() {
-        Authentication auth =
-                SecurityContextHolder.getContext().getAuthentication();
-        return (User) auth.getPrincipal();
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = auth.getName();
+
+        return userRepository.findByUsername(username)
+            .orElseThrow(() -> new RuntimeException("User not found"));
     }
+
 }
