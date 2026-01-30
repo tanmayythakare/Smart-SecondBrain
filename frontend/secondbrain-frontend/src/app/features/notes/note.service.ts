@@ -63,29 +63,26 @@ export class NoteService {
       { headers: this.getAuthHeaders() }
     );
   }
+linkNotes(sourceId: number, targetId: number): Observable<any> {
+  return this.http.post(
+    `${environment.apiUrl}/note-links?sourceId=${sourceId}&targetId=${targetId}`,
+    {},
+    { headers: this.getAuthHeaders() }
+  );
+}
 
-  // Link two notes together
-  linkNotes(sourceId: number, targetId: number): Observable<any> {
-    return this.http.post(
-      `http://localhost:8080/api/note-links?sourceId=${sourceId}&targetId=${targetId}`,
-      {},
-      { headers: this.getAuthHeaders() }
-    );
-  }
+getRelatedNotes(noteId: number): Observable<any[]> {
+  return this.http.get<any[]>(
+    `${environment.apiUrl}/note-links/${noteId}`,
+    { headers: this.getAuthHeaders() }
+  );
+}
 
-  // Get related notes (linked notes)
-  getRelatedNotes(noteId: number): Observable<any[]> {
-    return this.http.get<any[]>(
-      `http://localhost:8080/api/note-links/${noteId}`,
-      { headers: this.getAuthHeaders() }
-    );
-  }
+getBacklinks(noteId: number): Observable<any[]> {
+  return this.http.get<any[]>(
+    `${environment.apiUrl}/note-links/backlinks/${noteId}`,
+    { headers: this.getAuthHeaders() }
+  );
+}
 
-  // Get backlinks (notes that link to this note)
-  getBacklinks(noteId: number): Observable<any[]> {
-    return this.http.get<any[]>(
-      `http://localhost:8080/api/note-links/backlinks/${noteId}`,
-      { headers: this.getAuthHeaders() }
-    );
-  }
 }
