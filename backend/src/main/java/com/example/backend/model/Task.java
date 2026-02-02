@@ -25,10 +25,10 @@ public class Task {
 
     private LocalDate dueDate;
 
-    @Column(nullable = false, updatable = false)
+    @Column
     private LocalDateTime createdAt;
 
-    @Column(nullable = false)
+    @Column
     private LocalDateTime updatedAt;
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -22,10 +22,10 @@ public class Note {
     @JsonIgnore
     private User user;
 
-    @Column(nullable = false, updatable = false)
+    @Column
     private LocalDateTime createdAt;
 
-    @Column(nullable = false)
+    @Column
     private LocalDateTime updatedAt;
 
     /* ======================

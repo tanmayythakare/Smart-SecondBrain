@@ -1,7 +1,9 @@
 package com.example.backend.controller;
 
 import java.util.List;
+import java.util.Map;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +22,7 @@ public class TaskController {
     public TaskController(TaskService taskService) {
         this.taskService = taskService;
     }
+    
 
     @PostMapping
     public Task createTask(@RequestBody TaskRequest request) {
@@ -28,10 +31,17 @@ public class TaskController {
     }
 
     @GetMapping
-    public List<Task> getTasks() {
-        User user = getCurrentUser();
-        return taskService.getTasks(user);
+    public ResponseEntity<?> getTasks() {
+        try {
+            User user = getCurrentUser();
+            return ResponseEntity.ok(taskService.getTasks(user));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500)
+                    .body(Map.of("error", "Failed to fetch tasks"));
+        }
     }
+
     @PutMapping("/{id}")
     public Task updateTask(@PathVariable Long id,
                            @RequestBody TaskRequest request) {
