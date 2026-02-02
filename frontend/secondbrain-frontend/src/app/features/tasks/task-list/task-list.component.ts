@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { TaskService } from '../task.service';
 
-// Make sure your Task interface exists
+// Task interface remains unchanged
 export interface Task {
   id?: number;
   title: string;
@@ -12,16 +12,20 @@ export interface Task {
   templateUrl: './task-list.component.html'
 })
 export class TaskListComponent implements OnInit {
-  
+
   tasks: Task[] = [];
   newTaskTitle = '';
-  
+
   // Edit mode properties
   editingTaskId: number | null = null;
   editingTaskTitle = '';
-  
+
   // Delete confirmation
   deleteConfirmTaskId: number | null = null;
+
+  // ✅ NEW: loading & error states
+  isLoading = false;
+  errorMessage: string | null = null;
 
   constructor(private taskService: TaskService) {}
 
@@ -30,38 +34,60 @@ export class TaskListComponent implements OnInit {
   }
 
   loadTasks() {
-    this.taskService.getTasks().subscribe(tasks => {
-      this.tasks = tasks;
+    this.isLoading = true;          // NEW
+    this.errorMessage = null;       // NEW
+
+    this.taskService.getTasks().subscribe({
+      next: (tasks) => {
+        this.tasks = tasks;
+        this.isLoading = false;     // NEW
+      },
+      error: (error) => {
+        console.error(error);
+        this.errorMessage = 'Failed to load tasks. Please try again.';
+        this.isLoading = false;     // NEW
+      }
     });
   }
 
   // ============================================
   // ADD TASK
   // ============================================
-  
+
   addTask() {
     if (!this.newTaskTitle.trim()) {
       return;
     }
 
-    this.taskService.createTask(this.newTaskTitle).subscribe(() => {
-      this.newTaskTitle = '';
-      this.loadTasks();
+    this.isLoading = true;          // NEW
+    this.errorMessage = null;       // NEW
+
+    this.taskService.createTask(this.newTaskTitle).subscribe({
+      next: () => {
+        this.newTaskTitle = '';
+        this.loadTasks();
+      },
+      error: (error) => {
+        console.error(error);
+        this.errorMessage = 'Failed to create task.';
+        this.isLoading = false;
+      }
     });
   }
 
   // ============================================
-  // EDIT TASK - INLINE, NO PROMPTS
+  // EDIT TASK
   // ============================================
-  
+
   startEdit(task: Task) {
-    // Instead of prompt, switch to inline edit mode
     this.editingTaskId = task.id!;
     this.editingTaskTitle = task.title;
-    
-    // Focus the input after a brief delay
+
     setTimeout(() => {
-      const input = document.querySelector(`input[data-task-id="${task.id}"]`) as HTMLInputElement;
+      const input = document.querySelector(
+        `input[data-task-id="${task.id}"]`
+      ) as HTMLInputElement;
+
       if (input) {
         input.focus();
         input.select();
@@ -79,9 +105,19 @@ export class TaskListComponent implements OnInit {
       return;
     }
 
-    this.taskService.updateTask(task.id!, this.editingTaskTitle).subscribe(() => {
-      this.cancelEdit();
-      this.loadTasks();
+    this.isLoading = true;          // NEW
+    this.errorMessage = null;       // NEW
+
+    this.taskService.updateTask(task.id!, this.editingTaskTitle).subscribe({
+      next: () => {
+        this.cancelEdit();
+        this.loadTasks();
+      },
+      error: (error) => {
+        console.error(error);
+        this.errorMessage = 'Failed to update task.';
+        this.isLoading = false;
+      }
     });
   }
 
@@ -90,7 +126,6 @@ export class TaskListComponent implements OnInit {
     this.editingTaskTitle = '';
   }
 
-  // Handle Enter key to save, Escape to cancel
   onEditKeydown(event: KeyboardEvent, task: Task) {
     if (event.key === 'Enter') {
       event.preventDefault();
@@ -101,15 +136,12 @@ export class TaskListComponent implements OnInit {
   }
 
   // ============================================
-  // DELETE TASK - INLINE CONFIRM, NO PROMPTS
+  // DELETE TASK
   // ============================================
-  
+
   toggleDeleteConfirm(task: Task) {
-    if (this.deleteConfirmTaskId === task.id) {
-      this.deleteConfirmTaskId = null;
-    } else {
-      this.deleteConfirmTaskId = task.id!;
-    }
+    this.deleteConfirmTaskId =
+      this.deleteConfirmTaskId === task.id ? null : task.id!;
   }
 
   isDeleteConfirmVisible(task: Task): boolean {
@@ -117,9 +149,19 @@ export class TaskListComponent implements OnInit {
   }
 
   confirmDelete(task: Task) {
-    this.taskService.deleteTask(task.id!).subscribe(() => {
-      this.deleteConfirmTaskId = null;
-      this.loadTasks();
+    this.isLoading = true;          // NEW
+    this.errorMessage = null;       // NEW
+
+    this.taskService.deleteTask(task.id!).subscribe({
+      next: () => {
+        this.deleteConfirmTaskId = null;
+        this.loadTasks();
+      },
+      error: (error) => {
+        console.error(error);
+        this.errorMessage = 'Failed to delete task.';
+        this.isLoading = false;
+      }
     });
   }
 

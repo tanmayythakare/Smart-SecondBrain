@@ -1,6 +1,9 @@
 <div class="page">
   <h2>My Tasks</h2>
 
+  <!-- =====================
+       TASK INPUT
+       ===================== -->
   <div class="task-input">
     <input
       type="text"
@@ -11,21 +14,47 @@
     <button (click)="addTask()">Add Task</button>
   </div>
 
-  <ul class="task-list" *ngIf="tasks && tasks.length > 0">
-    <li *ngFor="let task of tasks; let i = index" class="task-item card">
-      
+  <!-- =====================
+       LOADING STATE
+       ===================== -->
+  <div *ngIf="isLoading" style="text-align: center; padding: 2rem;">
+    <p>Loading tasks...</p>
+  </div>
+
+  <!-- =====================
+       ERROR STATE
+       ===================== -->
+  <div *ngIf="!isLoading && errorMessage" style="text-align: center; padding: 2rem; color: red;">
+    {{ errorMessage }}
+  </div>
+
+  <!-- =====================
+       TASK LIST
+       ===================== -->
+  <ul
+    class="task-list"
+    *ngIf="!isLoading && !errorMessage && tasks && tasks.length > 0"
+  >
+    <li *ngFor="let task of tasks" class="task-item card">
+
       <!-- VIEW MODE -->
-      <div *ngIf="!isEditing(task)" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+      <div
+        *ngIf="!isEditing(task)"
+        style="display: flex; justify-content: space-between; align-items: center; width: 100%;"
+      >
         <span>{{ task.title }}</span>
-        
+
         <div class="task-actions">
-          <button class="secondry" (click)="startEdit(task)">✏️ Edit</button>
+          <button class="secondary" (click)="startEdit(task)">✏️ Edit</button>
           <button class="danger" (click)="toggleDeleteConfirm(task)">🗑️ Delete</button>
         </div>
       </div>
 
       <!-- EDIT MODE -->
-      <div *ngIf="isEditing(task)" style="display: flex; gap: 0.5rem; align-items: center; width: 100%;">
+      <div
+        *ngIf="isEditing(task)"
+        style="display: flex; gap: 0.5rem; align-items: center; width: 100%;"
+      >
         <input
           type="text"
           [(ngModel)]="editingTaskTitle"
@@ -43,20 +72,28 @@
 
       <!-- DELETE CONFIRMATION -->
       <div *ngIf="isDeleteConfirmVisible(task)" class="delete-overlay">
-  <div class="delete-box">
-    <p>⚠️ Delete "{{ task.title }}"?</p>
-    <div class="actions">
-      <button class="danger" (click)="confirmDelete(task)">Yes, Delete</button>
-      <button class="secondary" (click)="cancelDelete()">Cancel</button>
-    </div>
-  </div>
-</div>
+        <div class="delete-box">
+          <p>⚠️ Delete "{{ task.title }}"?</p>
+          <div class="actions">
+            <button class="danger" (click)="confirmDelete(task)">Yes, Delete</button>
+            <button class="secondary" (click)="cancelDelete()">Cancel</button>
+          </div>
+        </div>
+      </div>
 
     </li>
   </ul>
 
-  <div *ngIf="!tasks || tasks.length === 0" style="text-align: center; padding: 3rem; color: var(--gray-400);">
+  <!-- =====================
+       EMPTY STATE
+       ===================== -->
+  <div
+    *ngIf="!isLoading && !errorMessage && (!tasks || tasks.length === 0)"
+    style="text-align: center; padding: 3rem; color: var(--gray-400);"
+  >
     <p style="font-size: 1.125rem; margin-bottom: 0.5rem;">📋 No tasks yet</p>
-    <p style="font-size: 0.875rem; color: var(--gray-500);">Add your first task to get started!</p>
+    <p style="font-size: 0.875rem; color: var(--gray-500);">
+      Add your first task to get started!
+    </p>
   </div>
 </div>

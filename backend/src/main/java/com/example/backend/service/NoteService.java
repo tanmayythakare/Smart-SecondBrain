@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.example.backend.exception.ResourceNotFoundException;
 import com.example.backend.model.Note;
 import com.example.backend.model.User;
 import com.example.backend.repository.NoteRepository;
@@ -35,10 +36,10 @@ public class NoteService {
     public Note updateNote(Long noteId, String title, String content, User user) {
 
         Note note = noteRepository.findById(noteId)
-                .orElseThrow(() -> new RuntimeException("Note not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Note not found"));
 
         if (!note.getUser().getId().equals(user.getId())) {
-            throw new RuntimeException("Unauthorized access to note");
+            throw new ResourceNotFoundException("Unautorized to access the note");
         }
 
         note.setTitle(title);
@@ -49,10 +50,10 @@ public class NoteService {
     public void deleteNote(Long noteId, User user) {
 
         Note note = noteRepository.findById(noteId)
-                .orElseThrow(() -> new RuntimeException("Note not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Note not found"));
 
         if (!note.getUser().getId().equals(user.getId())) {
-            throw new RuntimeException("Unauthorized access to note");
+            throw new ResourceNotFoundException("Unautorized to access the note");
         }
 
         noteRepository.delete(note);

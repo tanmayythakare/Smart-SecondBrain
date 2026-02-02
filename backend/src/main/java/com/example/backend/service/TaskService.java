@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.example.backend.exception.ResourceNotFoundException;
 import com.example.backend.model.Task;
 import com.example.backend.model.User;
 import com.example.backend.repository.TaskRepository;
@@ -30,10 +31,10 @@ public class TaskService {
     public Task updateTask(Long taskId, String title, User user) {
 
         Task task = taskRepository.findById(taskId)
-                .orElseThrow(() -> new RuntimeException("Task not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Task not found"));
 
         if (!task.getUser().getId().equals(user.getId())) {
-            throw new RuntimeException("Unauthorized access to task");
+            throw new ResourceNotFoundException("Unautorized to access the task");
         }
 
         task.setTitle(title);
@@ -43,10 +44,10 @@ public class TaskService {
     public void deleteTask(Long taskId, User user) {
 
         Task task = taskRepository.findById(taskId)
-                .orElseThrow(() -> new RuntimeException("Task not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Task not found"));
 
         if (!task.getUser().getId().equals(user.getId())) {
-            throw new RuntimeException("Unauthorized access to task");
+            throw new ResourceNotFoundException("Unautorized to access the task");
         }
 
         taskRepository.delete(task);
