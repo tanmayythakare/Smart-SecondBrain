@@ -3,7 +3,6 @@
 > A production-ready full-stack productivity platform demonstrating enterprise-grade architecture, security practices, and scalable design patterns.
 
 [![Live Demo](https://img.shields.io/badge/demo-live-success)](https://thisissecondbrain.netlify.app)
-[![API Docs](https://img.shields.io/badge/API-Swagger-blue)](https://secondbrain-c9bn.onrender.com/swagger-ui.html)
 [![License](https://img.shields.io/badge/license-MIT-green)]()
 
 ---
@@ -17,7 +16,6 @@
 - [Architecture](#-architecture)
 - [Security](#-security)
 - [Getting Started](#-getting-started)
-- [API Documentation](#-api-documentation)
 - [Deployment](#-deployment)
 - [Roadmap](#-roadmap)
 
@@ -43,7 +41,6 @@ This is a **portfolio-grade project** built to demonstrate end-to-end full-stack
 |---------|-----|-------------|
 | **Frontend** | [thisissecondbrain.netlify.app](https://thisissecondbrain.netlify.app) | Angular SPA hosted on Netlify |
 | **Backend API** | [secondbrain-c9bn.onrender.com](https://secondbrain-c9bn.onrender.com) | Spring Boot REST API |
-| **API Docs** | [Swagger UI](https://secondbrain-c9bn.onrender.com/swagger-ui.html) | Interactive API documentation |
 
 ---
 
@@ -309,18 +306,6 @@ API_URL=https://secondbrain-c9bn.onrender.com
 - [ ] Automated testing suite
 - [ ] Performance monitoring
 - [ ] Database backup automation
-
----
-
-## 📊 Project Status
-
-![Version](https://img.shields.io/badge/version-1.0.0-blue)
-![Status](https://img.shields.io/badge/status-production-success)
-![Build](https://img.shields.io/badge/build-passing-brightgreen)
-
-**Current Version:** v1.0.0  
-**Status:** Production-ready, actively maintained  
-**Focus:** Core functionality, security, and deployment stability
 
 ---
 
