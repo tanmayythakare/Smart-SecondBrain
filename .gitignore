@@ -1,24 +1,21 @@
-# Java / Spring Boot
-target/
-*.class
+# Secrets - never commit
+backend/src/main/resources/application.properties
+backend/src/main/resources/application-prod.properties
+
+# Local dev utilities
+kill-ports.ps1
+backend/kill-ports.ps1
+
+# Logs and test scripts
 *.log
+*.py
+test_payload.json
+scratch/
+_trash/
 
-# Maven
-.mvn/
-!mvnw
-!mvnw.cmd
-
-# Node / Angular
-node_modules/
-dist/
-
-# IDEs
+# Build and IDE
+target/
 .idea/
 .vscode/
-.project
-.classpath
-.settings/
-
-# OS
-.DS_Store
-Thumbs.db
+node_modules/
+dist/
