@@ -13,6 +13,7 @@ export class NoteDetailComponent implements OnInit {
   assistantQuery = '';
   isAiLoading = false;
   aiResult = '';
+  successMessage: string | null = null;
 
   constructor(
     private route: ActivatedRoute,
@@ -64,7 +65,8 @@ export class NoteDetailComponent implements OnInit {
     if (!this.note) return;
     this.noteService.updateNote(this.note.id, this.note.title, this.note.content).subscribe({
       next: () => {
-        console.log('Note saved successfully');
+        this.successMessage = 'Changes saved successfully';
+        setTimeout(() => this.successMessage = null, 3000);
       }
     });
   }
