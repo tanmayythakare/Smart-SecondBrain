@@ -1,12 +1,20 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation, AfterViewChecked } from '@angular/core';
 import { NoteService, Note } from '../note.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-note-list',
-  templateUrl: './note-list.component.html'
+  templateUrl: './note-list.component.html',
+  styleUrls: ['./note-list.component.css'],
+  encapsulation: ViewEncapsulation.None
 })
-export class NoteListComponent implements OnInit {
+export class NoteListComponent implements OnInit, AfterViewChecked {
+
+  ngAfterViewChecked(): void {
+    if ((window as any).lucide) {
+      (window as any).lucide.createIcons();
+    }
+  }
 
   notes: Note[] = [];
   
@@ -16,39 +24,42 @@ export class NoteListComponent implements OnInit {
   noteContent = '';
   editingNote: Note | null = null;
   
-  // Link modal properties
-  showLinkModal = false;
-  linkingNote: Note | null = null;
-  linkTargetId: any = ''; // Changed to 'any' to handle both string and number
-  
   // Delete confirmation tracking (instead of browser confirm dialog)
   deleteConfirmNoteId: number | null = null;
   
-  backlinks: any[] = [];
+  isLoading = false;
+  isAiLoading = false;
+  errorMessage = '';
 
   // Getter for filtered notes based on search
   get filteredNotes(): Note[] {
+    const validNotes = (this.notes || []).filter(note => 
+      (note?.title && note.title.trim() !== '') || (note?.content && note.content.trim() !== '')
+    );
+
     if (!this.searchQuery.trim()) {
-      return this.notes;
+      return validNotes;
     }
     
     const query = this.searchQuery.toLowerCase();
-    return this.notes.filter(note => 
+    return validNotes.filter(note => 
       note.title.toLowerCase().includes(query) ||
       note.content.toLowerCase().includes(query)
     );
   }
 
-  constructor(private noteService: NoteService, private route: ActivatedRoute) {}
+  constructor(
+    private noteService: NoteService, 
+    private route: ActivatedRoute,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
-    const noteId = Number(id);
 
     if (id) {
       this.noteService.getNotes().subscribe(notes => {
         this.notes = notes.filter(n => n.id === Number(id));
-        this.loadBacklinks(noteId);
       });
     } else {
       this.loadNotes();
@@ -56,14 +67,19 @@ export class NoteListComponent implements OnInit {
   }
 
   loadNotes() {
-    this.noteService.getNotes().subscribe(notes => {
-      this.notes = notes;
+    this.isLoading = true;
+    this.errorMessage = '';
+    this.noteService.getNotes().subscribe({
+      next: (notes) => {
+        this.notes = notes;
+        this.isLoading = false;
+      },
+      error: (err) => {
+        this.errorMessage = 'Failed to load notes. Please try again.';
+        this.isLoading = false;
+        console.error(err);
+      }
     });
-  }
-
-  loadBacklinks(noteId: number) {
-    this.noteService.getBacklinks(noteId)
-      .subscribe(res => this.backlinks = res);
   }
 
   // ============================================
@@ -75,19 +91,36 @@ export class NoteListComponent implements OnInit {
       return;
     }
 
+    this.isLoading = true;
+    this.errorMessage = '';
+
     if (this.editingNote) {
       // UPDATE existing note
       this.noteService.updateNote(this.editingNote.id, this.noteTitle, this.noteContent)
-        .subscribe(() => {
-          this.clearNoteForm();
-          this.loadNotes();
+        .subscribe({
+          next: () => {
+            this.clearNoteForm();
+            this.loadNotes();
+          },
+          error: (err) => {
+            this.errorMessage = 'Failed to update note.';
+            this.isLoading = false;
+            console.error(err);
+          }
         });
     } else {
       // CREATE new note
       this.noteService.createNote(this.noteTitle, this.noteContent)
-        .subscribe(() => {
-          this.clearNoteForm();
-          this.loadNotes();
+        .subscribe({
+          next: () => {
+            this.clearNoteForm();
+            this.loadNotes();
+          },
+          error: (err) => {
+            this.errorMessage = 'Failed to create note.';
+            this.isLoading = false;
+            console.error(err);
+          }
         });
     }
   }
@@ -97,23 +130,16 @@ export class NoteListComponent implements OnInit {
   // ============================================
   
   editNote(note: Note) {
-    // Instead of using browser prompt(), we populate the form
-    this.editingNote = note;
-    this.noteTitle = note.title;
-    this.noteContent = note.content;
-    
-    // Scroll to the top so user can see the form
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    
-    // Focus the title input after a brief delay for smooth UX
+    this.router.navigate(['/notes', note.id]);
+  }
+
+  successMessage: string | null = null;
+
+  showSuccess(message: string) {
+    this.successMessage = message;
     setTimeout(() => {
-      const titleInput = document.querySelector('input[placeholder="Note title"]') as HTMLInputElement;
-      if (titleInput) {
-        titleInput.focus();
-        // Optional: select all text so user can start typing immediately
-        titleInput.select();
-      }
-    }, 300);
+      this.successMessage = null;
+    }, 3000);
   }
 
   // Clear the form and exit edit mode
@@ -121,6 +147,29 @@ export class NoteListComponent implements OnInit {
     this.noteTitle = '';
     this.noteContent = '';
     this.editingNote = null;
+  }
+
+  createNewNote() {
+    this.isLoading = true;
+    this.noteService.createNote('New Note', 'Start writing...').subscribe({
+      next: (note: any) => {
+        this.isLoading = false;
+        if (note && note.id) {
+          this.router.navigate(['/notes', note.id]);
+        } else if (note && note.content && note.content[0] && note.content[0].id) {
+          // Handle Page response just in case
+          this.router.navigate(['/notes', note.content[0].id]);
+        } else {
+          this.errorMessage = 'Failed to create note: invalid response from server.';
+          console.error('createNewNote: note or note.id is undefined', note);
+        }
+      },
+      error: (err) => {
+        this.isLoading = false;
+        this.errorMessage = 'Failed to create note. Please try again.';
+        console.error(err);
+      }
+    });
   }
 
   // Cancel editing without saving
@@ -146,15 +195,25 @@ export class NoteListComponent implements OnInit {
     return this.deleteConfirmNoteId === note.id;
   }
 
-  confirmDelete(note: Note) {
-    this.noteService.deleteNote(note.id)
-      .subscribe(() => {
-        // If we were editing this note, clear the form
-        if (this.editingNote && this.editingNote.id === note.id) {
-          this.clearNoteForm();
+  confirmDelete() {
+    if (!this.deleteConfirmNoteId) return;
+    this.isLoading = true;
+    this.noteService.deleteNote(this.deleteConfirmNoteId)
+      .subscribe({
+        next: () => {
+          this.showSuccess('Note deleted successfully');
+          if (this.editingNote && this.editingNote.id === this.deleteConfirmNoteId) {
+            this.clearNoteForm();
+          }
+          this.deleteConfirmNoteId = null;
+          this.loadNotes();
+        },
+        error: (err) => {
+          this.errorMessage = 'Failed to delete note.';
+          this.isLoading = false;
+          this.deleteConfirmNoteId = null;
+          console.error(err);
         }
-        this.deleteConfirmNoteId = null;
-        this.loadNotes();
       });
   }
 
@@ -162,56 +221,19 @@ export class NoteListComponent implements OnInit {
     this.deleteConfirmNoteId = null;
   }
 
-  // ============================================
-  // LINK NOTES - NO PROMPTS, USES MODAL - FIXED
-  // ============================================
-  
-  openLinkModal(note: Note) {
-    // Instead of browser prompt(), we show a modal
-    this.linkingNote = note;
-    this.linkTargetId = '';
-    this.showLinkModal = true;
-  }
-
-  closeLinkModal() {
-    this.showLinkModal = false;
-    this.linkingNote = null;
-    this.linkTargetId = '';
-  }
-
-  linkNotes() {
-    if (!this.linkingNote || !this.linkTargetId) {
-      return;
-    }
-
-    // Convert to number and validate
-    const targetId = Number(this.linkTargetId);
+  aiAssist(instruction: string) {
+    if (!this.noteContent.trim() || this.isAiLoading) return;
     
-    // Check if it's a valid number
-    if (isNaN(targetId) || targetId <= 0) {
-      console.error('Invalid note ID');
-      return;
-    }
-
-    this.noteService.linkNotes(this.linkingNote.id, targetId)
-      .subscribe(() => {
-        this.closeLinkModal();
-        this.loadNotes();
-      }, error => {
-        console.error('Link error:', error);
-        // You could show an error message in the modal instead of alert
-      });
-  }
-
-  // ============================================
-  // VIEW RELATED NOTES
-  // ============================================
-  
-  viewRelated(note: any) {
-    this.noteService.getRelatedNotes(note.id)
-      .subscribe(related => {
-        console.log('RELATED NOTES:', related);
-        // You can display this in a modal or side panel instead of alert
-      });
+    this.isAiLoading = true;
+    this.noteService.assistNote(this.noteContent, instruction).subscribe({
+      next: (res) => {
+        this.noteContent = res.result;
+        this.isAiLoading = false;
+      },
+      error: (err) => {
+        this.errorMessage = 'AI Assistant failed to process the note.';
+        this.isAiLoading = false;
+      }
+    });
   }
 }

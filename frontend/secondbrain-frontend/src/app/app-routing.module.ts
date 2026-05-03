@@ -3,11 +3,12 @@ import { RouterModule, Routes } from '@angular/router';
 import { TaskListComponent } from './features/tasks/task-list/task-list.component';
 import { AuthGuard } from './core/guards/auth.guard';
 import { NoteListComponent } from './features/notes/note-list/note-list.component';
-import { NoteGraphComponent } from './features/notes/note-graph/note-graph.component';
+import { NoteDetailComponent } from './features/notes/note-detail/note-detail.component';
+import { AiChatComponent } from './features/ai-chat/ai-chat.component';
 
 const routes: Routes = [
   {
-    path: 'login',
+    path: 'auth',
     loadChildren: () =>
       import('./features/auth/auth.module').then(m => m.AuthModule)
   },
@@ -17,14 +18,15 @@ const routes: Routes = [
     canActivate: [AuthGuard]
   },
   {
-    path: 'graph',
-    component: NoteGraphComponent,
+    path: 'ai',
+    component: AiChatComponent,
     canActivate: [AuthGuard]
   },
+
   {
-  path: 'notes/:id',
-  component: NoteListComponent,
-  canActivate: [AuthGuard]
+    path: 'notes/:id',
+    component: NoteDetailComponent,
+    canActivate: [AuthGuard]
   },
    {
     path: 'notes',
@@ -33,12 +35,12 @@ const routes: Routes = [
   },
   {
     path: '',
-    redirectTo: 'login',
+    redirectTo: 'auth/login',
     pathMatch: 'full'
   },
   {
     path: '**',
-    redirectTo: 'login'
+    redirectTo: 'auth/login'
   }
 ];
 

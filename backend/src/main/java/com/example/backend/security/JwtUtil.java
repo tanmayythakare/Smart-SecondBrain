@@ -14,13 +14,18 @@ import io.jsonwebtoken.security.Keys;
 @Component
 public class JwtUtil {
 
-    @Value("${jwt.secret}")
+    @Value("${jwt.secret:default_secret_key_for_development_purposes_only_1234567890}")
     private String secret;
 
     private final long JWT_EXPIRATION = 1000 * 60 * 60 * 24; // 24 hours
 
     private Key getSigningKey() {
-        return Keys.hmacShaKeyFor(secret.getBytes());
+        byte[] keyBytes = secret.getBytes();
+        if (keyBytes.length < 32) {
+            // Fallback for weak/short secrets to avoid JWS exception
+            return Keys.hmacShaKeyFor(String.format("%-32s", secret).replace(' ', '0').getBytes());
+        }
+        return Keys.hmacShaKeyFor(keyBytes);
     }
 
     public String generateToken(String username) {

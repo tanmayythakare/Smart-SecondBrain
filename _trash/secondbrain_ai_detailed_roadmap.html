@@ -1,0 +1,302 @@
+
+<h2 class="sr-only">SecondBrain AI integration roadmap — 4 phases with detailed backend, frontend, API, DB, and checklist info for each</h2>
+<style>
+.phase-nav{display:flex;gap:8px;margin-bottom:1.5rem;flex-wrap:wrap}
+.phase-btn{padding:6px 14px;border:0.5px solid var(--color-border-secondary);border-radius:20px;background:transparent;color:var(--color-text-secondary);font-size:13px;cursor:pointer;transition:all .15s}
+.phase-btn.active{background:var(--color-background-info);color:var(--color-text-info);border-color:var(--color-border-info)}
+.phase-panel{display:none}
+.phase-panel.active{display:block}
+.section-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;margin-bottom:12px}
+.card{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:14px 16px}
+.card-full{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:14px 16px;margin-bottom:12px}
+.card-title{font-size:12px;font-weight:500;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.04em;margin:0 0 10px}
+.item{display:flex;gap:8px;margin-bottom:7px;align-items:flex-start;font-size:13px;color:var(--color-text-primary);line-height:1.5}
+.item:last-child{margin-bottom:0}
+.dot{width:5px;height:5px;border-radius:50%;margin-top:6px;flex-shrink:0}
+.dot-blue{background:#378ADD}
+.dot-teal{background:#1D9E75}
+.dot-purple{background:#7F77DD}
+.dot-amber{background:#BA7517}
+.dot-green{background:#639922}
+.dot-coral{background:#D85A30}
+.tag{display:inline-block;font-size:11px;padding:2px 8px;border-radius:10px;margin-right:4px;margin-bottom:3px;font-weight:500}
+.tag-be{background:var(--color-background-info);color:var(--color-text-info)}
+.tag-fe{background:#E1F5EE;color:#085041}
+.tag-db{background:#FAEEDA;color:#633806}
+.tag-api{background:#FAECE7;color:#712B13}
+.tag-risk{background:#FCEBEB;color:#791F1F}
+.phase-header{margin-bottom:1rem}
+.phase-title{font-size:18px;font-weight:500;color:var(--color-text-primary);margin:0 0 4px}
+.phase-sub{font-size:13px;color:var(--color-text-secondary);margin:0 0 10px}
+.phase-goal{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:10px 14px;font-size:13px;color:var(--color-text-primary);line-height:1.6}
+.flow-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:6px}
+.flow-box{background:var(--color-background-primary);border:0.5px solid var(--color-border-secondary);border-radius:6px;padding:4px 10px;font-size:12px;color:var(--color-text-primary)}
+.flow-arrow{color:var(--color-text-tertiary);font-size:13px}
+.check-item{display:flex;gap:8px;align-items:flex-start;font-size:13px;padding:5px 0;border-bottom:0.5px solid var(--color-border-tertiary);line-height:1.5}
+.check-item:last-child{border-bottom:none}
+.check-box{width:15px;height:15px;border:0.5px solid var(--color-border-secondary);border-radius:3px;flex-shrink:0;margin-top:1px;background:var(--color-background-primary)}
+code{font-family:var(--font-mono);font-size:11.5px;background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:3px;padding:1px 5px;color:var(--color-text-primary)}
+</style>
+
+<div class="phase-nav">
+  <button class="phase-btn active" onclick="show(0)">Phase 1 — MVP Chat</button>
+  <button class="phase-btn" onclick="show(1)">Phase 2 — Memory</button>
+  <button class="phase-btn" onclick="show(2)">Phase 3 — Note AI</button>
+  <button class="phase-btn" onclick="show(3)">Phase 4 — Advanced</button>
+</div>
+
+<div id="p0" class="phase-panel active">
+  <div class="phase-header">
+    <p class="phase-title">Phase 1 — MVP: Basic AI Chat</p>
+    <p class="phase-sub">Build first. Get the full pipeline working end-to-end before adding memory.</p>
+    <div class="phase-goal">Goal: user types a message → backend detects intent → Ollama is called → AI response returns with clickable task/note links → frontend renders them with routing to <code>/tasks/:id</code> or <code>/notes/:id</code>.</div>
+  </div>
+
+  <div class="section-grid">
+    <div class="card">
+      <p class="card-title"><span class="tag tag-be">Backend</span> New files</p>
+      <div class="item"><div class="dot dot-blue"></div><div><code>ai/AiChatController.java</code> — POST <code>/api/ai/chat</code>, takes <code>ChatRequestDto</code>, returns <code>ChatResponseDto</code>, secured via existing JWT interceptor</div></div>
+      <div class="item"><div class="dot dot-blue"></div><div><code>ai/AiChatService.java</code> — main orchestrator: calls intent detector, builds context, calls Ollama, validates returned IDs against DB, returns response</div></div>
+      <div class="item"><div class="dot dot-blue"></div><div><code>ai/OllamaService.java</code> — thin HTTP client wrapping <code>POST localhost:11434/api/generate</code> with <code>{ model, prompt, stream:false }</code>; must have try/catch returning graceful error on failure</div></div>
+      <div class="item"><div class="dot dot-blue"></div><div><code>ai/ContextBuilderService.java</code> — fetches pending/overdue tasks (id, title, due_date) + last 5 note titles (id, title) from DB; assembles context string; hard cap 2000 tokens</div></div>
+      <div class="item"><div class="dot dot-blue"></div><div><code>ai/PromptBuilder.java</code> — static utility, fills prompt template with context + user message; instructs AI to respond in JSON with <code>message</code> + <code>items[]</code></div></div>
+    </div>
+    <div class="card">
+      <p class="card-title"><span class="tag tag-be">Backend</span> DTOs</p>
+      <div class="item"><div class="dot dot-purple"></div><div><code>dto/ai/ChatRequestDto.java</code><br><code>String message</code></div></div>
+      <div class="item"><div class="dot dot-purple"></div><div><code>dto/ai/ChatResponseDto.java</code><br><code>String message</code><br><code>List&lt;LinkedItemDto&gt; items</code></div></div>
+      <div class="item"><div class="dot dot-purple"></div><div><code>dto/ai/LinkedItemDto.java</code><br><code>Long id</code><br><code>String type</code> — "task" or "note"<br><code>String title</code><br><code>LocalDate dueDate</code></div></div>
+      <div class="item"><div class="dot dot-amber"></div><div>Prompt template instructs AI to respond ONLY as JSON. Example:<br><code>{ "message":"…", "items":[{"id":12,"type":"task",…}] }</code></div></div>
+    </div>
+  </div>
+
+  <div class="section-grid">
+    <div class="card">
+      <p class="card-title"><span class="tag tag-fe">Frontend</span> New feature module</p>
+      <div class="item"><div class="dot dot-teal"></div><div><code>features/ai-chat/ai-chat.component.ts</code> — signal-based state: <code>messages = signal&lt;Message[]&gt;([])</code>, loading signal, <code>sendMessage()</code> method that appends user msg, calls service, appends AI response</div></div>
+      <div class="item"><div class="dot dot-teal"></div><div><code>features/ai-chat/ai-chat.service.ts</code> — <code>sendMessage(msg): Observable&lt;ChatResponse&gt;</code> → POST <code>/api/ai/chat</code>; JWT interceptor covers this automatically</div></div>
+      <div class="item"><div class="dot dot-teal"></div><div><code>features/ai-chat/message-bubble/</code> — standalone component; user msgs right-aligned, AI msgs left-aligned; renders <code>items[]</code> as clickable pills below the message text</div></div>
+      <div class="item"><div class="dot dot-teal"></div><div>Clickable items use Angular Router: <code>routerLink="/tasks/{{item.id}}"</code> or <code>"/notes/{{item.id}}"</code> based on <code>item.type</code></div></div>
+      <div class="item"><div class="dot dot-teal"></div><div>Loading state: show "AI is thinking..." indicator while request is in flight; Ollama cold starts can be slow</div></div>
+    </div>
+    <div class="card">
+      <p class="card-title"><span class="tag tag-fe">Frontend</span> Routing + nav</p>
+      <div class="item"><div class="dot dot-teal"></div><div>Add to app routing: <code>{ path: 'ai', component: AiChatComponent, canActivate: [AuthGuard] }</code></div></div>
+      <div class="item"><div class="dot dot-teal"></div><div>Update navbar component to include "AI" tab with <code>routerLink="/ai"</code> and <code>routerLinkActive="active"</code></div></div>
+      <div class="item"><div class="dot dot-amber"></div><div><span class="tag tag-api">API</span> POST <code>/api/ai/chat</code><br>Request: <code>{ message: "…" }</code><br>Response: <code>{ message: "…", items: […] }</code><br>Auth: JWT Bearer (auto via interceptor)</div></div>
+      <div class="item"><div class="dot dot-coral"></div><div><span class="tag tag-risk">Risk</span> AI may hallucinate IDs — validate every item ID in <code>AiChatService</code> against the DB before returning <code>ChatResponseDto</code>. Never trust raw Ollama output.</div></div>
+    </div>
+  </div>
+
+  <div class="card-full">
+    <p class="card-title">Request flow — Phase 1</p>
+    <div class="flow-row"><div class="flow-box">User types message</div><div class="flow-arrow">→</div><div class="flow-box">POST /api/ai/chat</div><div class="flow-arrow">→</div><div class="flow-box">AiChatController</div><div class="flow-arrow">→</div><div class="flow-box">AiChatService</div></div>
+    <div class="flow-row"><div class="flow-box">ContextBuilderService</div><div class="flow-arrow">→</div><div class="flow-box">tasks + note titles from DB</div><div class="flow-arrow">→</div><div class="flow-box">PromptBuilder</div><div class="flow-arrow">→</div><div class="flow-box">OllamaService</div></div>
+    <div class="flow-row"><div class="flow-box">Ollama returns JSON</div><div class="flow-arrow">→</div><div class="flow-box">validate IDs against DB</div><div class="flow-arrow">→</div><div class="flow-box">ChatResponseDto</div><div class="flow-arrow">→</div><div class="flow-box">frontend renders</div></div>
+  </div>
+
+  <div class="card-full">
+    <p class="card-title">Pre-flight checklist</p>
+    <div class="check-item"><div class="check-box"></div><div><code>ollama serve</code> running + <code>ollama pull llama3</code> completed</div></div>
+    <div class="check-item"><div class="check-box"></div><div><code>application.properties</code>: <code>ollama.base-url=http://localhost:11434</code></div></div>
+    <div class="check-item"><div class="check-box"></div><div>JWT interceptor confirmed to cover <code>/api/ai/*</code> (no extra config needed if it uses a wildcard pattern)</div></div>
+    <div class="check-item"><div class="check-box"></div><div>Prompt template token count estimated before first Ollama call — keep context under 2000 tokens</div></div>
+    <div class="check-item"><div class="check-box"></div><div>try/catch in <code>OllamaService</code> — if Ollama is down, return a graceful <code>ChatResponseDto</code> error message, never throw 500 to client</div></div>
+    <div class="check-item"><div class="check-box"></div><div>Angular route <code>/ai</code> guarded by <code>AuthGuard</code> — unauthenticated users redirected to login</div></div>
+  </div>
+</div>
+
+<div id="p1" class="phase-panel">
+  <div class="phase-header">
+    <p class="phase-title">Phase 2 — Memory System + Smart Routing</p>
+    <p class="phase-sub">Only start after Phase 1 is working end-to-end. Adds 3 DB tables, intent-based Ollama bypass, and compressed memory injection into context.</p>
+    <div class="phase-goal">Goal: short, direct queries ("show pending tasks") skip Ollama entirely and return instantly. AI-required queries now include recent chat history and compressed past item references in context. Full memory pipeline operational.</div>
+  </div>
+
+  <div class="section-grid">
+    <div class="card">
+      <p class="card-title"><span class="tag tag-be">Backend</span> IntentDetectorService</p>
+      <div class="item"><div class="dot dot-blue"></div><div>New file: <code>ai/IntentDetectorService.java</code> — returns enum <code>DIRECT_QUERY</code> or <code>AI_REQUIRED</code></div></div>
+      <div class="item"><div class="dot dot-blue"></div><div><code>DIRECT_QUERY</code> keywords: "pending", "overdue", "today", "list my tasks", "show notes", "how many tasks", "what tasks" — keyword match on lowercased message</div></div>
+      <div class="item"><div class="dot dot-blue"></div><div>If <code>DIRECT_QUERY</code>: <code>AiChatService</code> queries DB directly, formats as <code>ChatResponseDto</code>, returns — no Ollama call, no latency</div></div>
+      <div class="item"><div class="dot dot-blue"></div><div>If <code>AI_REQUIRED</code>: full pipeline from Phase 1 runs, plus memory now injected into context</div></div>
+      <div class="item"><div class="dot dot-amber"></div><div>Expand keyword list incrementally as you discover common direct queries in production</div></div>
+    </div>
+    <div class="card">
+      <p class="card-title"><span class="tag tag-be">Backend</span> ContextBuilderService updates</p>
+      <div class="item"><div class="dot dot-blue"></div><div>Existing: pending/overdue tasks + last 5 note titles</div></div>
+      <div class="item"><div class="dot dot-blue"></div><div>Add: fetch last 10 messages from <code>ai_chat_messages</code> for this user (role + content), inject as <code>[RECENT CHAT]</code> block</div></div>
+      <div class="item"><div class="dot dot-blue"></div><div>Add: fetch compressed memory from <code>ai_memory_compressed</code> (id, title, due_date only), inject as <code>[COMPRESSED MEMORY]</code> block</div></div>
+      <div class="item"><div class="dot dot-blue"></div><div>Add: fetch session summaries from <code>ai_chat_summaries</code> for this user (last 3 summaries), inject as <code>[PAST SESSIONS]</code> block</div></div>
+      <div class="item"><div class="dot dot-coral"></div><div><span class="tag tag-risk">Critical</span> Enforce 2000 token hard limit — if total context exceeds it, drop compressed memory first, then past sessions, never drop the live task/note list</div></div>
+    </div>
+  </div>
+
+  <div class="section-grid">
+    <div class="card">
+      <p class="card-title"><span class="tag tag-db">DB</span> ai_chat_messages</p>
+      <div class="item"><div class="dot dot-amber"></div><div>Flyway: <code>V{n}__create_ai_chat_messages.sql</code></div></div>
+      <div class="item"><div class="dot dot-amber"></div><div><code>id BIGSERIAL PRIMARY KEY</code></div></div>
+      <div class="item"><div class="dot dot-amber"></div><div><code>user_id BIGINT REFERENCES users(id)</code></div></div>
+      <div class="item"><div class="dot dot-amber"></div><div><code>session_id UUID NOT NULL</code></div></div>
+      <div class="item"><div class="dot dot-amber"></div><div><code>role VARCHAR(10)</code> — 'user' or 'assistant'</div></div>
+      <div class="item"><div class="dot dot-amber"></div><div><code>content TEXT NOT NULL</code></div></div>
+      <div class="item"><div class="dot dot-amber"></div><div><code>created_at TIMESTAMP DEFAULT NOW()</code></div></div>
+      <div class="item"><div class="dot dot-green"></div><div>Retention: 7 days full detail, then delete raw rows</div></div>
+    </div>
+    <div class="card">
+      <p class="card-title"><span class="tag tag-db">DB</span> ai_memory_compressed + ai_chat_summaries</p>
+      <div class="item"><div class="dot dot-amber"></div><div><code>ai_memory_compressed</code>: id, user_id, item_type ('task'|'note'), item_id, title, due_date — only metadata, never full content</div></div>
+      <div class="item"><div class="dot dot-amber"></div><div>Populated: every time AI references a task or note in a response, record it here. Deleted: when the original item is deleted.</div></div>
+      <div class="item"><div class="dot dot-amber"></div><div>Retention: indefinite — this is how AI knows about old items without loading their content</div></div>
+      <div class="item"><div class="dot dot-amber"></div><div><code>ai_chat_summaries</code>: id, user_id, session_id, summary TEXT, created_at</div></div>
+      <div class="item"><div class="dot dot-amber"></div><div>Trigger: session has >20 messages OR last message >24h ago → summarize and save, then delete raw messages</div></div>
+      <div class="item"><div class="dot dot-green"></div><div>Retention: 30 days</div></div>
+    </div>
+  </div>
+
+  <div class="card-full">
+    <p class="card-title">Memory flow</p>
+    <div class="flow-row"><div class="flow-box">New message saved</div><div class="flow-arrow">→</div><div class="flow-box">ai_chat_messages</div><div class="flow-arrow">→</div><div class="flow-box">items referenced?</div><div class="flow-arrow">→</div><div class="flow-box">ai_memory_compressed</div></div>
+    <div class="flow-row"><div class="flow-box">Session ends / &gt;24h</div><div class="flow-arrow">→</div><div class="flow-box">summarize via Ollama</div><div class="flow-arrow">→</div><div class="flow-box">save to ai_chat_summaries</div><div class="flow-arrow">→</div><div class="flow-box">delete raw rows &gt;7d</div></div>
+  </div>
+
+  <div class="card-full">
+    <p class="card-title">Intent routing flow</p>
+    <div class="flow-row"><div class="flow-box">User: "show pending tasks"</div><div class="flow-arrow">→</div><div class="flow-box">IntentDetector → DIRECT_QUERY</div><div class="flow-arrow">→</div><div class="flow-box">TaskRepository.findPending()</div><div class="flow-arrow">→</div><div class="flow-box">ChatResponseDto returned instantly</div></div>
+    <div class="flow-row"><div class="flow-box">User: "what should I focus on?"</div><div class="flow-arrow">→</div><div class="flow-box">IntentDetector → AI_REQUIRED</div><div class="flow-arrow">→</div><div class="flow-box">ContextBuilder + memory</div><div class="flow-arrow">→</div><div class="flow-box">Ollama → parse → validate → return</div></div>
+  </div>
+
+  <div class="card-full">
+    <p class="card-title">What is NEVER stored in AI tables</p>
+    <div class="item"><div class="dot dot-coral"></div><div>Full note content — AI never receives or stores it. Notes are referenced by id + title only.</div></div>
+    <div class="item"><div class="dot dot-coral"></div><div>Full task content beyond id + title + due_date in compressed memory</div></div>
+    <div class="item"><div class="dot dot-coral"></div><div>User profile data, passwords, email addresses, any PII beyond what's in tasks/notes</div></div>
+    <div class="item"><div class="dot dot-coral"></div><div>Full chat history beyond 7 days — after that only summaries remain</div></div>
+  </div>
+</div>
+
+<div id="p2" class="phase-panel">
+  <div class="phase-header">
+    <p class="phase-title">Phase 3 — Note Assistant (in-note AI panel)</p>
+    <p class="phase-sub">Requires Phase 1 + 2 stable. Adds an AI panel directly inside the note detail page with three actions.</p>
+    <div class="phase-goal">Goal: user opens any note → sees an AI panel on the right → clicks Summarize, Explain, or Extract tasks → AI responds with note-specific output. Extracted tasks can be accepted with one click to create real tasks.</div>
+  </div>
+
+  <div class="section-grid">
+    <div class="card">
+      <p class="card-title"><span class="tag tag-be">Backend</span> New endpoint</p>
+      <div class="item"><div class="dot dot-blue"></div><div>New file: <code>ai/NoteAiController.java</code> → POST <code>/api/ai/note-assist</code></div></div>
+      <div class="item"><div class="dot dot-blue"></div><div>Request body: <code>{ noteId: Long, action: String }</code> where action is one of: <code>"summarize"</code>, <code>"explain"</code>, <code>"extract_tasks"</code></div></div>
+      <div class="item"><div class="dot dot-blue"></div><div>New file: <code>ai/NoteAiService.java</code> — fetches note content from <code>NoteRepository.findById(noteId)</code>, validates user owns the note (security), builds action-specific prompt</div></div>
+      <div class="item"><div class="dot dot-blue"></div><div>Summarize prompt: "Summarize this note in 2-3 sentences: {content}"</div></div>
+      <div class="item"><div class="dot dot-blue"></div><div>Explain prompt: "Explain the key concepts in this note clearly: {content}"</div></div>
+      <div class="item"><div class="dot dot-blue"></div><div>Extract tasks prompt: "Extract a list of actionable tasks from this note. Return as JSON: { tasks: [{title, suggestedDueDate}] }. Content: {content}"</div></div>
+      <div class="item"><div class="dot dot-coral"></div><div><span class="tag tag-risk">Security</span> Always verify <code>note.userId == authenticatedUserId</code> before fetching content — never allow cross-user note access</div></div>
+    </div>
+    <div class="card">
+      <p class="card-title"><span class="tag tag-fe">Frontend</span> Note detail AI panel</p>
+      <div class="item"><div class="dot dot-teal"></div><div>Modify: <code>features/notes/note-detail/note-detail.component.ts</code> — add AI panel as a collapsible side section or bottom drawer</div></div>
+      <div class="item"><div class="dot dot-teal"></div><div>New: <code>features/notes/note-detail/note-ai-panel/note-ai-panel.component.ts</code> — takes <code>@Input() noteId</code>, manages its own loading/result state</div></div>
+      <div class="item"><div class="dot dot-teal"></div><div>Three action buttons: Summarize, Explain, Extract tasks — each calls POST <code>/api/ai/note-assist</code> with the relevant action string</div></div>
+      <div class="item"><div class="dot dot-teal"></div><div>For Extract tasks: render each suggestion as a card with title + suggested due date + "Add as task" button</div></div>
+      <div class="item"><div class="dot dot-teal"></div><div>"Add as task" button calls existing POST <code>/api/tasks</code> endpoint — reuses existing task creation, no new endpoint needed</div></div>
+      <div class="item"><div class="dot dot-teal"></div><div>Panel loading state: per-action spinner so the user knows which action is processing</div></div>
+    </div>
+  </div>
+
+  <div class="card-full">
+    <p class="card-title"><span class="tag tag-api">API</span> POST /api/ai/note-assist</p>
+    <div class="item"><div class="dot dot-blue"></div><div>Request: <code>{ "noteId": 42, "action": "extract_tasks" }</code></div></div>
+    <div class="item"><div class="dot dot-blue"></div><div>Response (summarize/explain): <code>{ "message": "This note covers…", "items": [] }</code></div></div>
+    <div class="item"><div class="dot dot-blue"></div><div>Response (extract_tasks): <code>{ "message": "Found 3 tasks", "items": [{"id":null,"type":"suggestion","title":"…","dueDate":"…"}] }</code></div></div>
+    <div class="item"><div class="dot dot-amber"></div><div>Note: extracted task suggestions use <code>id: null</code> and <code>type: "suggestion"</code> — they don't exist in DB yet, only created when user clicks "Add as task"</div></div>
+  </div>
+
+  <div class="card-full">
+    <p class="card-title">Note assist flow</p>
+    <div class="flow-row"><div class="flow-box">User clicks Summarize</div><div class="flow-arrow">→</div><div class="flow-box">POST /api/ai/note-assist</div><div class="flow-arrow">→</div><div class="flow-box">NoteAiService fetches note</div></div>
+    <div class="flow-row"><div class="flow-box">Validates ownership</div><div class="flow-arrow">→</div><div class="flow-box">Builds action prompt</div><div class="flow-arrow">→</div><div class="flow-box">OllamaService.generate()</div><div class="flow-arrow">→</div><div class="flow-box">Returns to frontend</div></div>
+    <div class="flow-row"><div class="flow-box">User clicks "Add as task"</div><div class="flow-arrow">→</div><div class="flow-box">POST /api/tasks (existing)</div><div class="flow-arrow">→</div><div class="flow-box">Task created in DB</div><div class="flow-arrow">→</div><div class="flow-box">Button changes to "Added"</div></div>
+  </div>
+
+  <div class="section-grid">
+    <div class="card">
+      <p class="card-title">Dependencies</p>
+      <div class="item"><div class="dot dot-purple"></div><div>Phase 1 required: <code>OllamaService</code> is reused directly</div></div>
+      <div class="item"><div class="dot dot-purple"></div><div>Phase 2 optional but recommended: <code>ai_memory_compressed</code> can record note interactions for future context</div></div>
+      <div class="item"><div class="dot dot-purple"></div><div>Existing note endpoints must be stable — note detail page is being extended, not rewritten</div></div>
+    </div>
+    <div class="card">
+      <p class="card-title">What's reused from P1/P2</p>
+      <div class="item"><div class="dot dot-green"></div><div><code>OllamaService.generate()</code> — called directly</div></div>
+      <div class="item"><div class="dot dot-green"></div><div>JWT interceptor — covers <code>/api/ai/note-assist</code> automatically</div></div>
+      <div class="item"><div class="dot dot-green"></div><div>Existing POST <code>/api/tasks</code> for task creation from suggestions</div></div>
+      <div class="item"><div class="dot dot-green"></div><div>Angular <code>AuthGuard</code> — note detail route already protected</div></div>
+    </div>
+  </div>
+</div>
+
+<div id="p3" class="phase-panel">
+  <div class="phase-header">
+    <p class="phase-title">Phase 4 — Advanced / Optional</p>
+    <p class="phase-sub">Only touch these after Phase 1–3 are stable and you have a concrete problem to solve. Don't build speculatively.</p>
+    <div class="phase-goal">Three independent tracks — build whichever one your actual usage reveals as the bottleneck. They don't depend on each other.</div>
+  </div>
+
+  <div class="section-grid">
+    <div class="card">
+      <p class="card-title">Track A — Semantic search</p>
+      <div class="item"><div class="dot dot-blue"></div><div>Problem it solves: user has 500+ notes and "find the note about X" doesn't work with title-only matching</div></div>
+      <div class="item"><div class="dot dot-blue"></div><div>Approach: enable <code>pgvector</code> extension in PostgreSQL, add <code>embedding vector(1536)</code> column to notes table</div></div>
+      <div class="item"><div class="dot dot-blue"></div><div>On note save: call embedding API (Ollama's <code>/api/embeddings</code> endpoint or OpenAI), store vector</div></div>
+      <div class="item"><div class="dot dot-blue"></div><div>New endpoint: POST <code>/api/ai/search</code> — embeds query, runs cosine similarity search via pgvector, returns ranked note IDs</div></div>
+      <div class="item"><div class="dot dot-blue"></div><div>Frontend: add semantic search input to notes list page, display ranked results with similarity scores</div></div>
+      <div class="item"><div class="dot dot-amber"></div><div>Warning: embedding generation on every note save adds latency. Consider async queue if note volume is high.</div></div>
+    </div>
+    <div class="card">
+      <p class="card-title">Track B — Auto memory compression</p>
+      <div class="item"><div class="dot dot-purple"></div><div>Problem it solves: Phase 2 memory compression is manual/triggered — this makes it automatic</div></div>
+      <div class="item"><div class="dot dot-purple"></div><div>New: <code>ai/MemoryCompressionScheduler.java</code> — Spring <code>@Scheduled</code> job, runs nightly at e.g. 2AM</div></div>
+      <div class="item"><div class="dot dot-purple"></div><div>Logic: find all sessions with >20 messages OR last_message_at > 24h ago → for each, call Ollama to summarize → save to <code>ai_chat_summaries</code> → delete raw messages</div></div>
+      <div class="item"><div class="dot dot-purple"></div><div>Add <code>application.properties</code>: <code>ai.compression.enabled=true</code>, <code>ai.compression.cron=0 0 2 * * ?</code></div></div>
+      <div class="item"><div class="dot dot-purple"></div><div>Add DB index on <code>ai_chat_messages(user_id, created_at)</code> for efficient session lookup</div></div>
+      <div class="item"><div class="dot dot-amber"></div><div>Test on a seeded dataset before enabling in production — summarization quality affects future context quality.</div></div>
+    </div>
+  </div>
+
+  <div class="card-full">
+    <p class="card-title">Track C — Long-term memory (goals, habits, preferences)</p>
+    <div class="section-grid" style="margin-top:8px;margin-bottom:0">
+      <div>
+        <div class="item"><div class="dot dot-teal"></div><div>Problem it solves: AI has no persistent model of the user — can't say "you usually prefer morning tasks" or "your recurring goal is X"</div></div>
+        <div class="item"><div class="dot dot-teal"></div><div>New DB table: <code>ai_user_preferences</code> — user_id, key VARCHAR, value TEXT, updated_at</div></div>
+        <div class="item"><div class="dot dot-teal"></div><div>Keys could include: <code>working_hours</code>, <code>recurring_goals</code>, <code>productivity_patterns</code>, <code>preferred_task_length</code></div></div>
+      </div>
+      <div>
+        <div class="item"><div class="dot dot-teal"></div><div>New service: <code>ai/UserPreferenceService.java</code> — CRUD on preferences, injected into <code>ContextBuilderService</code> as a new <code>[USER CONTEXT]</code> block</div></div>
+        <div class="item"><div class="dot dot-teal"></div><div>Frontend: optional settings page at <code>/ai/settings</code> for user to view and edit what AI knows about them</div></div>
+        <div class="item"><div class="dot dot-amber"></div><div>Warning: this is the most complex track. Build only if users explicitly ask for more personalised AI behaviour.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card-full">
+    <p class="card-title"><span class="tag tag-risk">Risks</span> Across all phases</p>
+    <div class="check-item"><div class="check-box"></div><div>Context overflow: hard limit 2000 tokens in <code>ContextBuilderService</code>. Measure, don't estimate.</div></div>
+    <div class="check-item"><div class="check-box"></div><div>AI hallucinating IDs: validate every <code>item.id</code> in Ollama response against DB before returning to client. Always.</div></div>
+    <div class="check-item"><div class="check-box"></div><div>Ollama cold start: frontend must show loading state. First request after server boot can take 5–15s.</div></div>
+    <div class="check-item"><div class="check-box"></div><div>Ollama down: <code>OllamaService</code> must catch all exceptions and return a friendly <code>ChatResponseDto</code> error, not a 500.</div></div>
+    <div class="check-item"><div class="check-box"></div><div>AI controlling business logic: AI formats and links only. All filtering, auth, task/note creation = backend only.</div></div>
+    <div class="check-item"><div class="check-box"></div><div>Memory creep: full note/task content must never appear in any AI table. Only id + title + due_date in compressed memory.</div></div>
+    <div class="check-item"><div class="check-box"></div><div>Overengineering: build P1 completely before writing a single line of P2. Resist the urge to scaffold everything upfront.</div></div>
+    <div class="check-item"><div class="check-box"></div><div>Cross-user data leak: every AI service method must scope queries by <code>userId</code>. Never return another user's tasks/notes to AI context.</div></div>
+  </div>
+</div>
+
+<script>
+function show(i) {
+  document.querySelectorAll('.phase-panel').forEach((p,idx) => p.classList.toggle('active', idx===i));
+  document.querySelectorAll('.phase-btn').forEach((b,idx) => b.classList.toggle('active', idx===i));
+}
+</script>

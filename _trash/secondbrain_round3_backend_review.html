@@ -1,0 +1,173 @@
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+.wrap { padding: 20px 0; font-family: var(--font-sans); }
+.file-section { margin-bottom: 16px; border-radius: var(--border-radius-lg); border: 0.5px solid var(--color-border-tertiary); overflow: hidden; }
+.file-header { display: flex; align-items: center; gap: 10px; padding: 11px 16px; cursor: pointer; user-select: none; background: var(--color-background-secondary); }
+.file-header:hover { background: var(--color-background-tertiary); }
+.file-name { font-size: 12px; font-family: var(--font-mono); color: var(--color-text-primary); flex: 1; }
+.issue-count { font-size: 11px; color: var(--color-text-tertiary); }
+.chevron { font-size: 10px; color: var(--color-text-tertiary); transition: transform 0.2s; }
+.chevron.open { transform: rotate(90deg); }
+.file-body { border-top: 0.5px solid var(--color-border-tertiary); }
+.hidden { display: none; }
+.issue { display: flex; gap: 10px; padding: 11px 16px; border-bottom: 0.5px solid var(--color-border-tertiary); }
+.issue:last-child { border-bottom: none; }
+.sev { font-size: 10px; font-weight: 500; padding: 2px 8px; border-radius: 10px; white-space: nowrap; margin-top: 1px; flex-shrink: 0; }
+.critical { background: #FCEBEB; color: #A32D2D; }
+.major    { background: #FAEEDA; color: #854F0B; }
+.minor    { background: #E6F1FB; color: #185FA5; }
+.polish   { background: #F1EFE8; color: #5F5E5A; }
+@media (prefers-color-scheme: dark) {
+  .critical { background: #791F1F; color: #F7C1C1; }
+  .major    { background: #633806; color: #FAC775; }
+  .minor    { background: #0C447C; color: #B5D4F4; }
+  .polish   { background: #444441; color: #D3D1C7; }
+}
+.issue-body { flex: 1; }
+.issue-title { font-size: 13px; font-weight: 500; color: var(--color-text-primary); line-height: 1.4; }
+.issue-detail { font-size: 12px; color: var(--color-text-secondary); margin-top: 3px; line-height: 1.6; }
+.issue-detail code { font-family: var(--font-mono); font-size: 11px; background: var(--color-background-tertiary); padding: 1px 4px; border-radius: 3px; color: var(--color-text-primary); }
+.summary { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+.s-pill { font-size: 11px; font-weight: 500; padding: 4px 10px; border-radius: 20px; }
+.s-c { background: #FCEBEB; color: #A32D2D; }
+.s-m { background: #FAEEDA; color: #854F0B; }
+.s-mi { background: #E6F1FB; color: #185FA5; }
+.s-p { background: #F1EFE8; color: #5F5E5A; }
+@media (prefers-color-scheme: dark) {
+  .s-c { background: #791F1F; color: #F7C1C1; }
+  .s-m { background: #633806; color: #FAC775; }
+  .s-mi { background: #0C447C; color: #B5D4F4; }
+  .s-p { background: #444441; color: #D3D1C7; }
+}
+.good-section { margin-bottom: 16px; padding: 14px 16px; border-radius: var(--border-radius-lg); border: 0.5px solid var(--color-border-tertiary); background: var(--color-background-secondary); }
+.good-title { font-size: 12px; font-weight: 500; color: var(--color-text-secondary); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.05em; }
+.good-item { display: flex; gap: 8px; align-items: flex-start; margin-bottom: 8px; font-size: 12px; color: var(--color-text-secondary); line-height: 1.5; }
+.good-item:last-child { margin-bottom: 0; }
+.check { color: #1D9E75; font-size: 13px; flex-shrink: 0; }
+</style>
+
+<div class="wrap">
+
+<div class="summary">
+  <span class="s-pill s-c">4 critical</span>
+  <span class="s-pill s-m">8 major</span>
+  <span class="s-pill s-mi">7 minor</span>
+  <span class="s-pill s-p">4 polish</span>
+</div>
+
+<!-- What's good -->
+<div class="good-section">
+  <div class="good-title">What's genuinely solid</div>
+  <div class="good-item"><span class="check">✓</span> Architecture is clean — controller → service → repository layers are properly separated</div>
+  <div class="good-item"><span class="check">✓</span> JWT auth with <code>@AuthenticationPrincipal User user</code> on every endpoint — data isolation is correct</div>
+  <div class="good-item"><span class="check">✓</span> Rate limiting on auth endpoints via <code>RateLimiter</code> — proactive security</div>
+  <div class="good-item"><span class="check">✓</span> <code>ChatMessage</code> entity properly persists history with user + role + timestamp</div>
+  <div class="good-item"><span class="check">✓</span> Embedding fields on both <code>Task</code> and <code>Note</code> with <code>DoubleListConverter</code> — RAG foundation is solid</div>
+  <div class="good-item"><span class="check">✓</span> <code>spring.jpa.hibernate.ddl-auto=update</code> — safe for dev, won't nuke data on restart</div>
+  <div class="good-item"><span class="check">✓</span> AI layer is deeply modularized — Safety, DecisionEngine, ContextBuilder, Embedding, Cache all separate services</div>
+</div>
+
+<!-- TaskController -->
+<div class="file-section">
+  <div class="file-header" onclick="toggle(this)">
+    <span class="file-name">TaskController.java / TaskService.java</span>
+    <span class="issue-count">5 issues</span>
+    <span class="chevron open">▶</span>
+  </div>
+  <div class="file-body">
+    <div class="issue"><span class="sev critical">critical</span><div class="issue-body"><div class="issue-title">createTask() only accepts title — no priority, dueDate, or status</div><div class="issue-detail"><code>taskService.createTask(request.getTitle(), user)</code> — the <code>TaskRequest</code> likely only has <code>title</code>. The <code>Task</code> entity has <code>priority</code>, <code>dueDate</code>, and <code>status</code> fields but they're all ignored on creation. Every task is born with null priority and null dueDate. Fix <code>TaskRequest</code> to include all fields and pass them through to the service.</div></div></div>
+    <div class="issue"><span class="sev critical">critical</span><div class="issue-body"><div class="issue-title">updateTask() only accepts title + completed boolean — priority and dueDate can never be updated</div><div class="issue-detail"><code>taskService.updateTask(id, request.getTitle(), request.isCompleted(), user)</code> — there is no way for the frontend to update a task's priority or due date via the API. These fields are permanently frozen at null after creation. The entire priority/scheduling system is non-functional.</div></div></div>
+    <div class="issue"><span class="sev major">major</span><div class="issue-body"><div class="issue-title">updateTask sets status to TODO when unchecked — loses IN_PROGRESS state</div><div class="issue-detail"><code>task.setStatus(completed ? TaskStatus.DONE : TaskStatus.TODO)</code> — the <code>TaskStatus</code> enum likely has TODO, IN_PROGRESS, DONE but the update logic only toggles between DONE and TODO. A task that was IN_PROGRESS gets reset to TODO when unchecked. Should preserve IN_PROGRESS or use a proper status field in the request.</div></div></div>
+    <div class="issue"><span class="sev major">major</span><div class="issue-body"><div class="issue-title">getTasks returns up to 100 tasks with no filtering — no "active today" endpoint</div><div class="issue-detail"><code>@PageableDefault(size = 100)</code> returns everything unsorted. There is no <code>GET /api/tasks?dueDate=today</code> or <code>status=active</code> filter endpoint. The frontend's "active today" badge has no real data to back it. Add <code>@RequestParam(required = false) String status</code> filtering.</div></div></div>
+    <div class="issue"><span class="sev minor">minor</span><div class="issue-body"><div class="issue-title">Task entity has no updatedAt field</div><div class="issue-detail"><code>Task.java</code> has <code>createdAt</code> but no <code>updatedAt</code>. When a task title is edited or status is toggled, there's no way to know when it last changed. Add <code>@PreUpdate</code> to set <code>updatedAt = LocalDateTime.now()</code>, matching how <code>Note</code> handles it.</div></div></div>
+  </div>
+</div>
+
+<!-- NoteController -->
+<div class="file-section">
+  <div class="file-header" onclick="toggle(this)">
+    <span class="file-name">NoteController.java / NoteService.java</span>
+    <span class="issue-count">4 issues</span>
+    <span class="chevron open">▶</span>
+  </div>
+  <div class="file-body">
+    <div class="issue"><span class="sev critical">critical</span><div class="issue-body"><div class="issue-title">NoteService has no event publishing for embeddings on createNote()</div><div class="issue-detail">Earlier diagnosis confirmed Notes use <code>@EventListener</code> for embedding generation. But <code>NoteService.createNote()</code> calls <code>noteRepository.save(note)</code> with no event published. Either the <code>ApplicationEventPublisher.publishEvent(new NoteEvent(note))</code> call is missing, or embeddings are only generated on update, not on initial creation. New notes will have null embeddings — breaking RAG for all newly created notes.</div></div></div>
+    <div class="issue"><span class="sev major">major</span><div class="issue-body"><div class="issue-title">getNotes() uses pagination but frontend expects a flat list</div><div class="issue-detail"><code>NoteController.getNotes()</code> returns <code>Page&lt;NoteDTO&gt;</code>. The Angular <code>note-list</code> component likely does <code>this.http.get&lt;Note[]&gt;</code> expecting a flat array. If it's receiving a <code>Page</code> object (<code>{ content: [], totalPages: 1, ... }</code>) and treating it as an array, <code>filteredNotes</code> will always be empty or undefined — which explains why notes don't show even after creation.</div></div></div>
+    <div class="issue"><span class="sev major">major</span><div class="issue-body"><div class="issue-title">updateNote() has no @PreUpdate for updatedAt — timestamp stays stale</div><div class="issue-detail"><code>noteRepository.save(note)</code> in <code>updateNote()</code> doesn't explicitly set <code>updatedAt</code>. If there's no <code>@PreUpdate</code> lifecycle hook on the entity, the <code>updatedAt</code> field stays at the creation time forever. The note-detail shows "Last updated" but it's always wrong.</div></div></div>
+    <div class="issue"><span class="sev minor">minor</span><div class="issue-body"><div class="issue-title">searchNotes uses JPQL but query method is unknown — may not handle empty strings</div><div class="issue-detail"><code>noteRepository.searchByUser(user, q, pageable)</code> — the JPQL query is in <code>NoteRepository</code> which wasn't shared. If it uses <code>LIKE %:q%</code> and <code>q</code> is empty or blank, it returns no results instead of all notes. Should have a guard: if <code>q.isBlank()</code> call <code>getNotes()</code> instead.</div></div></div>
+  </div>
+</div>
+
+<!-- AiChatController -->
+<div class="file-section">
+  <div class="file-header" onclick="toggle(this)">
+    <span class="file-name">AiChatController.java / AiChatService.java</span>
+    <span class="issue-count">5 issues</span>
+    <span class="chevron">▶</span>
+  </div>
+  <div class="file-body hidden">
+    <div class="issue"><span class="sev critical">critical</span><div class="issue-body"><div class="issue-title">AiChatService.processMessage() and streamProcessMessage() both return null/empty</div><div class="issue-detail">The shared code shows <code>return null</code> in <code>processMessage()</code> and <code>return Flux.empty()</code> in <code>streamProcessMessage()</code>. These are stubs. If the real implementation is in a different file not shared, that's fine — but if this IS the current state of the service, the entire AI chat is non-functional beyond what was tested earlier.</div></div></div>
+    <div class="issue"><span class="sev major">major</span><div class="issue-body"><div class="issue-title">streamChat() has empty catch blocks — errors are silently swallowed</div><div class="issue-detail"><code>catch (Exception e) {}</code> in both <code>doOnNext</code> and <code>doOnComplete</code>. If <code>emitter.send()</code> throws (client disconnected, timeout), the exception is swallowed with no logging, no emitter cleanup, no error event sent to the frontend. Should at minimum log the error and call <code>emitter.completeWithError(e)</code>.</div></div></div>
+    <div class="issue"><span class="sev major">major</span><div class="issue-body"><div class="issue-title">getHistory() returns raw ChatMessage entities — exposes internal model to frontend</div><div class="issue-detail"><code>public List&lt;ChatMessage&gt; getHistory()</code> returns the JPA entity directly including the <code>User</code> relationship. This risks lazy-loading exceptions and leaks internal fields. Should return a <code>ChatMessageDTO</code> with only <code>role</code>, <code>content</code>, <code>timestamp</code>.</div></div></div>
+    <div class="issue"><span class="sev minor">minor</span><div class="issue-body"><div class="issue-title">confirmAction() returns null — agentic confirm endpoint is a stub</div><div class="issue-detail"><code>confirmAction()</code> returns <code>null</code>. The frontend has a "Confirm Action" button wired to <code>POST /api/ai/chat/confirm</code>. If this method isn't implemented, clicking confirm silently fails or throws a NullPointerException that gets swallowed.</div></div></div>
+    <div class="issue"><span class="sev minor">minor</span><div class="issue-body"><div class="issue-title">No rate limiting on /api/ai/chat/stream</div><div class="issue-detail">Auth endpoints have <code>RateLimiter</code>. The AI chat stream endpoint has none. A single user can hammer Gemini with hundreds of requests per minute, exhausting your API quota instantly. Add per-user rate limiting: max 20 requests/minute using <code>RateLimitingService</code> which already exists in your AI package.</div></div></div>
+  </div>
+</div>
+
+<!-- AuthController -->
+<div class="file-section">
+  <div class="file-header" onclick="toggle(this)">
+    <span class="file-name">AuthController.java / AuthService.java</span>
+    <span class="issue-count">3 issues</span>
+    <span class="chevron">▶</span>
+  </div>
+  <div class="file-body hidden">
+    <div class="issue"><span class="sev major">major</span><div class="issue-body"><div class="issue-title">register() returns void with 201 — no user info or token in response</div><div class="issue-detail"><code>public void register()</code> returns nothing. After registration the frontend must redirect to login and the user has to sign in again manually. Better UX: return an <code>AuthResponse</code> with a JWT token so the user is auto-logged-in after registration — same as most modern apps.</div></div></div>
+    <div class="issue"><span class="sev minor">minor</span><div class="issue-body"><div class="issue-title">RateLimiter uses IP address — ineffective behind proxies or NAT</div><div class="issue-detail"><code>servletRequest.getRemoteAddr()</code> returns the proxy IP when behind a load balancer or reverse proxy. All users behind the same corporate NAT share one rate limit bucket. Should check <code>X-Forwarded-For</code> header first: <code>request.getHeader("X-Forwarded-For")</code>.</div></div></div>
+    <div class="issue"><span class="sev minor">minor</span><div class="issue-body"><div class="issue-title">login() returns "Login Successful" with capital S — inconsistent casing</div><div class="issue-detail"><code>new AuthResponse(token, "Login Successful")</code> — the message string has title case. All other API error/success messages should follow a consistent convention. Either always sentence case ("Login successful") or always omit the message field for success responses.</div></div></div>
+  </div>
+</div>
+
+<!-- DB / Entities -->
+<div class="file-section">
+  <div class="file-header" onclick="toggle(this)">
+    <span class="file-name">Entities / DB Schema / application.properties</span>
+    <span class="issue-count">6 issues</span>
+    <span class="chevron">▶</span>
+  </div>
+  <div class="file-body hidden">
+    <div class="issue"><span class="sev major">major</span><div class="issue-body"><div class="issue-title">ddl-auto=update in production is dangerous</div><div class="issue-detail"><code>spring.jpa.hibernate.ddl-auto=update</code> is acceptable for dev but must NEVER be used in production. It can silently drop columns or fail on complex schema changes. For production: use <code>validate</code> with Flyway or Liquibase for migrations. At minimum add a comment warning about this.</div></div></div>
+    <div class="issue"><span class="sev major">major</span><div class="issue-body"><div class="issue-title">show-sql=true logs all queries — performance and security risk in prod</div><div class="issue-detail"><code>spring.jpa.show-sql=true</code> logs every SQL query including user data to stdout. In production this fills logs with sensitive data and degrades performance. Should be <code>false</code> in prod profile. Use Spring profiles: <code>application-dev.properties</code> vs <code>application-prod.properties</code>.</div></div></div>
+    <div class="issue"><span class="sev minor">minor</span><div class="issue-body"><div class="issue-title">Task entity has no @PrePersist for createdAt</div><div class="issue-detail"><code>Task.java</code> has <code>createdAt</code> field but no <code>@PrePersist</code> hook to auto-set it. If <code>TaskService.createTask()</code> doesn't explicitly set <code>createdAt = LocalDateTime.now()</code>, the field will be null in the DB for all tasks.</div></div></div>
+    <div class="issue"><span class="sev minor">minor</span><div class="issue-body"><div class="issue-title">ChatMessage.role is a plain String — should be an enum</div><div class="issue-detail"><code>private String role</code> with values "user" or "assistant". Nothing prevents saving "admin", "system", or a typo like "assitant". Should be <code>@Enumerated(EnumType.STRING) private MessageRole role</code> with a <code>MessageRole { USER, ASSISTANT }</code> enum.</div></div></div>
+    <div class="issue"><span class="sev minor">minor</span><div class="issue-body"><div class="issue-title">JWT secret falls back to a hardcoded value in dev</div><div class="issue-detail"><code>jwt.secret=${JWT_SECRET:********}</code> — the fallback after the colon is a hardcoded secret used when no env var is set. If that fallback is a weak or predictable string (e.g. "secret" or "mykey"), tokens signed with it are trivially forgeable. The fallback should be a long random string, or require the env var with no fallback in prod.</div></div></div>
+    <div class="issue"><span class="sev polish">polish</span><div class="issue-body"><div class="issue-title">TestController.java exists in production code</div><div class="issue-detail">A <code>TestController.java</code> is in <code>src/main/java</code> alongside production controllers. Test controllers should live in <code>src/test/java</code> or be removed before any deployment. Even with security filters, it's unnecessary surface area.</div></div></div>
+  </div>
+</div>
+
+<!-- File tree observations -->
+<div class="file-section">
+  <div class="file-header" onclick="toggle(this)">
+    <span class="file-name">File tree / Architecture observations</span>
+    <span class="issue-count">4 issues</span>
+    <span class="chevron">▶</span>
+  </div>
+  <div class="file-body hidden">
+    <div class="issue"><span class="sev major">major</span><div class="issue-body"><div class="issue-title">SelfImprovementService.java — unclear purpose, potential scope creep</div><div class="issue-detail">A service named <code>SelfImprovementService</code> exists in the AI package. Without seeing the code it's unclear what it does. If it's modifying prompts or logic based on feedback, it needs careful review — self-modifying AI behavior in a personal data app is a significant risk if it causes prompt drift or data leakage between users.</div></div></div>
+    <div class="issue"><span class="sev minor">minor</span><div class="issue-body"><div class="issue-title">SemanticCacheService exists but cache invalidation strategy is unknown</div><div class="issue-detail"><code>SemanticCacheService</code> caches AI responses. If a user creates a new task and then asks "what are my tasks?", the cached response may return stale data. Cache must be invalidated on any Task or Note mutation. Verify this is wired into <code>TaskService</code> and <code>NoteService</code> save/delete operations.</div></div></div>
+    <div class="issue"><span class="sev minor">minor</span><div class="issue-body"><div class="issue-title">NoteAssistController and NoteAssistService exist separately from AiChatController</div><div class="issue-detail">There are two AI controller paths: <code>/api/ai/chat</code> and a separate <code>NoteAssistController</code>. The note-detail AI sidebar likely uses the NoteAssist endpoints. Confirm these are properly secured with JWT and that user data isolation is enforced the same way as the main chat controller.</div></div></div>
+    <div class="issue"><span class="sev polish">polish</span><div class="issue-body"><div class="issue-title">ContextAssemblyService and ContextBuilderService — naming overlap</div><div class="issue-detail">Two services with nearly identical names: <code>ContextAssemblyService</code> and <code>ContextBuilderService</code>. Their responsibilities must be clearly distinct or they should be merged. Unclear naming in a complex AI pipeline causes maintenance confusion — document the distinction clearly or consolidate.</div></div></div>
+  </div>
+</div>
+
+</div>
+
+<script>
+function toggle(header) {
+  const body = header.nextElementSibling;
+  const chev = header.querySelector('.chevron');
+  body.classList.toggle('hidden');
+  chev.classList.toggle('open');
+}
+</script>

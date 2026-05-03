@@ -1,15 +1,23 @@
 package com.example.backend.controller;
 
 import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 
-import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import com.example.backend.repository.UserRepository;
 
+import com.example.backend.dto.DTOConverter;
+import com.example.backend.dto.NoteDTO;
 import com.example.backend.model.Note;
 import com.example.backend.model.User;
 import com.example.backend.service.NoteService;
+import org.springframework.http.ResponseEntity;
+import jakarta.validation.Valid;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/notes")
@@ -24,52 +32,50 @@ public class NoteController {
     }
 
     @GetMapping("/search")
-    public List<Note> searchNotes(@RequestParam String q) {
-      User user = getCurrentUser();
-      return noteService.searchNotes(q, user);
+    public Page<NoteDTO> searchNotes(@RequestParam String q, @AuthenticationPrincipal User user, @PageableDefault(size = 10) Pageable pageable) {
+        return noteService.searchNotes(q, user, pageable)
+                .map(DTOConverter::toDTO);
     }
 
+    @GetMapping("/{id}")
+    public NoteDTO getNote(@PathVariable Long id, @AuthenticationPrincipal User user) {
+        Note note = noteService.getNoteById(id, user);
+        return DTOConverter.toDTO(note);
+    }
 
     @PostMapping
-    public Note createNote(@RequestBody Note request) {
-        User user = getCurrentUser();
-        return noteService.createNote(
+    public NoteDTO createNote(@Valid @RequestBody NoteDTO request, @AuthenticationPrincipal User user) {
+        Note note = noteService.createNote(
                 request.getTitle(),
                 request.getContent(),
                 user
         );
+        return DTOConverter.toDTO(note);
     }
 
     @GetMapping
-    public List<Note> getNotes() {
-        User user = getCurrentUser();
-        return noteService.getNotes(user);
+    public Page<NoteDTO> getNotes(@AuthenticationPrincipal User user, @PageableDefault(size = 10) Pageable pageable) {
+        return noteService.getNotes(user, pageable)
+                .map(DTOConverter::toDTO);
     }
+
     @PutMapping("/{id}")
-    public Note updateNote(@PathVariable Long id,
-                           @RequestBody Note request) {
-        User user = getCurrentUser();
-        return noteService.updateNote(
+    public NoteDTO updateNote(@PathVariable Long id,
+                           @Valid @RequestBody NoteDTO request,
+                           @AuthenticationPrincipal User user) {
+        Note note = noteService.updateNote(
                 id,
                 request.getTitle(),
                 request.getContent(),
                 user
         );
+        return DTOConverter.toDTO(note);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteNote(@PathVariable Long id) {
-        User user = getCurrentUser();
+    public ResponseEntity<Void> deleteNote(@PathVariable Long id, @AuthenticationPrincipal User user) {
         noteService.deleteNote(id, user);
-    }
-
-
-    private User getCurrentUser() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String username = auth.getName();
-
-        return userRepository.findByUsername(username)
-            .orElseThrow(() -> new RuntimeException("User not found"));
+        return ResponseEntity.noContent().build();
     }
 
 }

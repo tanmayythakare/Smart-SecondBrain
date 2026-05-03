@@ -7,6 +7,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import jakarta.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "users")
 public class User implements UserDetails{
@@ -22,6 +24,7 @@ public class User implements UserDetails{
     private String email;
 
     @Column(nullable = false)
+    @JsonIgnore
     private String password;
 
     // getters & setters

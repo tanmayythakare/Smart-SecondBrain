@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SecondBrain AI Integration Roadmap</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-glow: rgba(99, 102, 241, 0.3);
+            --bg-dark: #0f172a;
+            --bg-card: rgba(30, 41, 59, 0.7);
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+            --border: rgba(255, 255, 255, 0.1);
+            --accent-green: #10b981;
+            --accent-purple: #a855f7;
+            --accent-amber: #f59e0b;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 60px;
+            position: relative;
+        }
+
+        .header-image {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            border-radius: 24px;
+            margin-bottom: 30px;
+            border: 1px solid var(--border);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+
+        h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff 0%, #94a3b8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: var(--text-dim);
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 12px 24px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 50px;
+            color: var(--text-dim);
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(10px);
+        }
+
+        .tab-btn:hover {
+            border-color: var(--primary);
+            color: var(--text-main);
+        }
+
+        .tab-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            box-shadow: 0 0 20px var(--primary-glow);
+        }
+
+        /* Phase Panels */
+        .phase-panel {
+            display: none;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .phase-panel.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .phase-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .phase-info { grid-template-columns: 1fr; }
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .icon {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            background: var(--glass-bg);
+            color: var(--primary);
+        }
+
+        h3 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .tech-list {
+            list-style: none;
+        }
+
+        .tech-list li {
+            margin-bottom: 12px;
+            padding-left: 25px;
+            position: relative;
+            font-size: 0.95rem;
+        }
+
+        .tech-list li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+        }
+
+        .badge-be { background: rgba(99, 102, 241, 0.2); color: #818cf8; }
+        .badge-fe { background: rgba(16, 185, 129, 0.2); color: #34d399; }
+        .badge-db { background: rgba(245, 158, 11, 0.2); color: #fbbf24; }
+
+        .full-card {
+            grid-column: 1 / -1;
+        }
+
+        .flow-diagram {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .flow-step {
+            background: var(--glass-bg);
+            padding: 10px 20px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            border: 1px solid var(--border);
+        }
+
+        .flow-arrow {
+            color: var(--text-dim);
+            font-weight: bold;
+        }
+
+        .checklist {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .check-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(0,0,0,0.2);
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+        }
+
+        .check-box {
+            width: 18px;
+            height: 18px;
+            border: 2px solid var(--primary);
+            border-radius: 4px;
+            flex-shrink: 0;
+        }
+
+        code {
+            background: rgba(0,0,0,0.3);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            color: var(--accent-purple);
+        }
+
+        footer {
+            margin-top: 80px;
+            text-align: center;
+            color: var(--text-dim);
+            font-size: 0.9rem;
+            padding-bottom: 40px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <img src="roadmap_header_ai_1777555105645.png" alt="SecondBrain AI Roadmap" class="header-image">
+        <h1>Life OS: AI Productivity</h1>
+        <p class="subtitle">An intelligent assistant that understands your work and helps you act. <br> <strong>Backend = Source of Truth | AI = Reasoning Layer</strong></p>
+    </header>
+
+    <div class="tabs">
+        <button class="tab-btn active" onclick="openPhase(event, 'phase1')">Phase 1: Main Brain</button>
+        <button class="tab-btn" onclick="openPhase(event, 'phase2')">Phase 2: Smart Memory</button>
+        <button class="tab-btn" onclick="openPhase(event, 'phase3')">Phase 3: Note AI</button>
+        <button class="tab-btn" onclick="openPhase(event, 'phase4')">Phase 4: Premium Polish</button>
+        <button class="tab-btn" onclick="openPhase(event, 'phase5')">Phase 5: Advanced</button>
+    </div>
+
+    <!-- PHASE 1 -->
+    <div id="phase1" class="phase-panel active">
+        <div class="phase-info">
+            <div class="card">
+                <span class="badge badge-be">Backend</span>
+                <div class="card-header"><h3>Reasoning Engine</h3></div>
+                <ul class="tech-list">
+                    <li><code>IntentDetector</code>: Maps queries to DB actions</li>
+                    <li><code>OllamaService</code>: Local LLM connectivity</li>
+                    <li><code>ContextBuilder</code>: Minimal context fetching</li>
+                </ul>
+            </div>
+            <div class="card">
+                <span class="badge badge-fe">Frontend</span>
+                <div class="card-header"><h3>AI Presence</h3></div>
+                <ul class="tech-list">
+                    <li>Signal-based chat state management</li>
+                    <li>"Alive" AI UI (not just static text)</li>
+                    <li>Integrated navigation to <code>/ai</code></li>
+                </ul>
+            </div>
+            <div class="card full-card">
+                <div class="card-header"><h3>Logic Flow</h3></div>
+                <div class="flow-diagram">
+                    <div class="flow-step">User Intent</div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-step">Backend Filter</div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-step">Minimal Context</div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-step">AI Reasoning</div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-step">Clickable Result</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PHASE 2 -->
+    <div id="phase2" class="phase-panel">
+        <div class="phase-info">
+            <div class="card">
+                <span class="badge badge-db">Hierarchy</span>
+                <div class="card-header"><h3>Multi-Level Memory</h3></div>
+                <ul class="tech-list">
+                    <li><strong>Short-Term</strong>: Full recent messages</li>
+                    <li><strong>Mid-Term</strong>: Summarized sessions</li>
+                    <li><strong>Long-Term</strong>: Compressed metadata</li>
+                    <li><strong>Facts Store</strong>: Permanent user insights</li>
+                </ul>
+            </div>
+            <div class="card">
+                <span class="badge badge-be">Efficiency</span>
+                <div class="card-header"><h3>Smart Routing</h3></div>
+                <ul class="tech-list">
+                    <li>Keyword-based LLM bypass</li>
+                    <li>Direct DB queries for ultra-fast response</li>
+                    <li>Context window optimization (2000 token cap)</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- PHASE 3 -->
+    <div id="phase3" class="phase-panel">
+        <div class="phase-info">
+            <div class="card">
+                <span class="badge badge-fe">Localized AI</span>
+                <div class="card-header"><h3>In-Note Intelligence</h3></div>
+                <ul class="tech-list">
+                    <li>Sidebar panel for the active note</li>
+                    <li>Summarize & Explain actions</li>
+                    <li>Task extraction (Cheap & Fast)</li>
+                </ul>
+            </div>
+            <div class="card">
+                <span class="badge badge-be">Automation</span>
+                <div class="card-header"><h3>Action Bridge</h3></div>
+                <ul class="tech-list">
+                    <li>AI-to-Task one-click conversion</li>
+                    <li>Strict note-ownership validation</li>
+                    <li>Context isolation (No global memory bloat)</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- PHASE 4 -->
+    <div id="phase4" class="phase-panel">
+        <div class="phase-info">
+            <div class="card">
+                <span class="badge badge-purple">Design</span>
+                <div class="card-header"><h3>Dual-Mode Polish</h3></div>
+                <ul class="tech-list">
+                    <li><strong>Dark (D3)</strong>: Glassmorphism & Glow</li>
+                    <li><strong>Light (D2)</strong>: Minimal & High-Contrast</li>
+                    <li>Dynamic CSS variable switching</li>
+                </ul>
+            </div>
+            <div class="card">
+                <span class="badge badge-fe">UX</span>
+                <div class="card-header"><h3>Motion & Life</h3></div>
+                <ul class="tech-list">
+                    <li>Smooth Angular Animations</li>
+                    <li>Breathing AI presence indicators</li>
+                    <li>Micro-interactions for feedback</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- PHASE 5 -->
+    <div id="phase5" class="phase-panel">
+        <div class="phase-info">
+            <div class="card">
+                <span class="badge badge-db">Advanced</span>
+                <div class="card-header"><h3>Semantic Search</h3></div>
+                <ul class="tech-list">
+                    <li><code>pgvector</code> similarity search</li>
+                    <li>Embedding generation on save</li>
+                    <li>"Meaning-based" finding</li>
+                </ul>
+            </div>
+            <div class="card">
+                <span class="badge badge-be">Maintenance</span>
+                <div class="card-header"><h3>Auto-Intelligence</h3></div>
+                <ul class="tech-list">
+                    <li>Scheduled session summarization</li>
+                    <li>Continuous fact distillation</li>
+                    <li>Preference learning</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>SecondBrain AI Integration Plan &bull; Confidential &bull; 2026</p>
+    </footer>
+</div>
+
+<script>
+    function openPhase(evt, phaseName) {
+        var i, tabcontent, tablinks;
+        tabcontent = document.getElementsByClassName("phase-panel");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].classList.remove("active");
+        }
+        tablinks = document.getElementsByClassName("tab-btn");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].classList.remove("active");
+        }
+        document.getElementById(phaseName).classList.add("active");
+        evt.currentTarget.classList.add("active");
+    }
+</script>
+
+</body>
+</html>

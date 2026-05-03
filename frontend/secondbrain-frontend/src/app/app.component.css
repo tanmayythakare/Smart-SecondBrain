@@ -1,0 +1,6 @@
+/* All navbar styles live in styles.css */
+/* This file intentionally minimal */
+
+.app-container {
+    min-height: 100vh;
+}

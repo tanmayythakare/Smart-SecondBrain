@@ -31,3 +31,19 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# Application properties with secrets
+src/main/resources/application.properties
+
+# Logs
+*.log
+backend_diag.log
+backend_final.log
+startup.log
+
+# Python diagnostic scripts
+*.py
+test_payload.json
+
+# Build output
+target/

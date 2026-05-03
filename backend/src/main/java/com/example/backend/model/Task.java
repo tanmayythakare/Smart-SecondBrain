@@ -4,9 +4,14 @@ import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import com.example.backend.util.DoubleListConverter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.util.List;
 
 @Entity
+@Table(name = "tasks", indexes = {
+    @Index(name = "idx_task_user", columnList = "user_id")
+})
 public class Task {
 
     @Id
@@ -30,6 +35,10 @@ public class Task {
 
     @Column
     private LocalDateTime updatedAt;
+
+    @Convert(converter = DoubleListConverter.class)
+    @Column(columnDefinition = "TEXT")
+    private List<Double> embedding;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
@@ -105,5 +114,13 @@ public class Task {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public List<Double> getEmbedding() {
+        return embedding;
+    }
+
+    public void setEmbedding(List<Double> embedding) {
+        this.embedding = embedding;
     }
 }

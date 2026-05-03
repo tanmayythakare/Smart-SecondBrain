@@ -1,17 +1,25 @@
 package com.example.backend.controller;
 
 import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.*;
-
+import com.example.backend.dto.DTOConverter;
+import com.example.backend.dto.TaskDTO;
 import com.example.backend.dto.TaskRequest;
 import com.example.backend.model.Task;
+import com.example.backend.model.TaskStatus;
 import com.example.backend.model.User;
 import com.example.backend.service.TaskService;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
+
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/tasks")
@@ -25,40 +33,38 @@ public class TaskController {
     
 
     @PostMapping
-    public Task createTask(@RequestBody TaskRequest request) {
-        User user = getCurrentUser();
-        return taskService.createTask(request.getTitle(), user);
+    public TaskDTO createTask(@Valid @RequestBody TaskRequest request, @AuthenticationPrincipal User user) {
+        Task task = taskService.createTask(request.getTitle(), request.getPriority(), request.getDueDate(), user);
+        return DTOConverter.toDTO(task);
     }
 
     @GetMapping
-    public ResponseEntity<?> getTasks() {
-        try {
-            User user = getCurrentUser();
-            return ResponseEntity.ok(taskService.getTasks(user));
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(500)
-                    .body(Map.of("error", "Failed to fetch tasks"));
-        }
+    public List<TaskDTO> getTasks(@AuthenticationPrincipal User user, @PageableDefault(size = 100) Pageable pageable) {
+        return taskService.getTasks(user, pageable)
+                .getContent()
+                .stream()
+                .map(DTOConverter::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    @GetMapping("/{id}")
+    public TaskDTO getTask(@PathVariable Long id, @AuthenticationPrincipal User user) {
+        Task task = taskService.getTaskById(id, user);
+        return DTOConverter.toDTO(task);
     }
 
     @PutMapping("/{id}")
-    public Task updateTask(@PathVariable Long id,
-                           @RequestBody TaskRequest request) {
-        User user = getCurrentUser();
-        return taskService.updateTask(id, request.getTitle(), user);
+    public TaskDTO updateTask(@PathVariable Long id,
+                           @Valid @RequestBody TaskRequest request,
+                           @AuthenticationPrincipal User user) {
+        Task task = taskService.updateTask(id, request.getTitle(), request.isCompleted(), request.getStatus(), request.getPriority(), request.getDueDate(), user);
+        return DTOConverter.toDTO(task);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteTask(@PathVariable Long id) {
-        User user = getCurrentUser();
+    public ResponseEntity<Void> deleteTask(@PathVariable Long id, @AuthenticationPrincipal User user) {
         taskService.deleteTask(id, user);
+        return ResponseEntity.noContent().build();
     }
 
-
-    private User getCurrentUser() {
-        Authentication authentication =
-                SecurityContextHolder.getContext().getAuthentication();
-        return (User) authentication.getPrincipal();
-    }
 }

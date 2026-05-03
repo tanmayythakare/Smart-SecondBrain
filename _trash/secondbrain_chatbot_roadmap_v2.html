@@ -1,0 +1,395 @@
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+.wrap { padding: 20px 0; font-family: var(--font-sans); }
+.legend { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 18px; padding: 12px 16px; border-radius: var(--border-radius-md); background: var(--color-background-secondary); border: 0.5px solid var(--color-border-tertiary); }
+.legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--color-text-secondary); }
+.ldot { width: 8px; height: 8px; border-radius: 50%; }
+.status-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+.s-pill { font-size: 11px; font-weight: 500; padding: 4px 10px; border-radius: 20px; }
+.s-done   { background: #E1F5EE; color: #0F6E56; }
+.s-partial{ background: #FAEEDA; color: #854F0B; }
+.s-todo   { background: #FCEBEB; color: #A32D2D; }
+@media (prefers-color-scheme: dark) {
+  .s-done   { background: #085041; color: #9FE1CB; }
+  .s-partial{ background: #633806; color: #FAC775; }
+  .s-todo   { background: #791F1F; color: #F7C1C1; }
+}
+.phase { margin-bottom: 16px; border-radius: var(--border-radius-lg); border: 0.5px solid var(--color-border-tertiary); overflow: hidden; }
+.phase-header { display: flex; align-items: center; gap: 10px; padding: 13px 16px; cursor: pointer; user-select: none; background: var(--color-background-secondary); }
+.phase-header:hover { background: var(--color-background-tertiary); }
+.badge { font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: 20px; white-space: nowrap; }
+.b-teal   { background: #E1F5EE; color: #0F6E56; }
+.b-amber  { background: #FAEEDA; color: #854F0B; }
+.b-purple { background: #EEEDFE; color: #3C3489; }
+.b-blue   { background: #E6F1FB; color: #185FA5; }
+.b-coral  { background: #FAECE7; color: #993C1D; }
+@media (prefers-color-scheme: dark) {
+  .b-teal   { background: #085041; color: #9FE1CB; }
+  .b-amber  { background: #633806; color: #FAC775; }
+  .b-purple { background: #3C3489; color: #CECBF6; }
+  .b-blue   { background: #0C447C; color: #B5D4F4; }
+  .b-coral  { background: #712B13; color: #F5C4B3; }
+}
+.phase-title { font-size: 14px; font-weight: 500; color: var(--color-text-primary); flex: 1; }
+.phase-meta { font-size: 12px; color: var(--color-text-tertiary); }
+.chevron { font-size: 11px; color: var(--color-text-tertiary); transition: transform 0.2s; }
+.chevron.open { transform: rotate(90deg); }
+.phase-body { border-top: 0.5px solid var(--color-border-tertiary); }
+.hidden { display: none; }
+.task { display: flex; gap: 12px; padding: 12px 16px; border-bottom: 0.5px solid var(--color-border-tertiary); }
+.task:last-child { border-bottom: none; }
+.task-left { display: flex; flex-direction: column; align-items: center; gap: 4px; padding-top: 2px; }
+.tdot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+.tline { width: 1px; background: var(--color-border-tertiary); flex: 1; min-height: 12px; }
+.dot-teal   { background: #1D9E75; }
+.dot-amber  { background: #BA7517; }
+.dot-purple { background: #7F77DD; }
+.dot-blue   { background: #378ADD; }
+.dot-coral  { background: #D85A30; }
+.task-content { flex: 1; }
+.task-top { display: flex; align-items: flex-start; gap: 8px; flex-wrap: wrap; }
+.task-name { font-size: 13px; font-weight: 500; color: var(--color-text-primary); line-height: 1.4; }
+.file-tag { font-size: 10px; font-family: var(--font-mono); background: var(--color-background-tertiary); color: var(--color-text-secondary); padding: 1px 6px; border-radius: 3px; border: 0.5px solid var(--color-border-secondary); white-space: nowrap; margin-top: 1px; }
+.task-detail { font-size: 12px; color: var(--color-text-secondary); margin-top: 4px; line-height: 1.6; }
+.task-detail code { font-family: var(--font-mono); font-size: 11px; background: var(--color-background-tertiary); padding: 1px 4px; border-radius: 3px; color: var(--color-text-primary); }
+.warn { font-size: 11px; color: #BA7517; margin-top: 5px; display: flex; align-items: flex-start; gap: 4px; }
+@media (prefers-color-scheme: dark) { .warn { color: #FAC775; } }
+.effort { font-size: 11px; color: var(--color-text-tertiary); margin-top: 5px; }
+.status-chip { font-size: 10px; font-weight: 500; padding: 2px 7px; border-radius: 10px; white-space: nowrap; }
+.chip-done    { background: #E1F5EE; color: #0F6E56; }
+.chip-partial { background: #FAEEDA; color: #854F0B; }
+.chip-todo    { background: #FCEBEB; color: #A32D2D; }
+@media (prefers-color-scheme: dark) {
+  .chip-done    { background: #085041; color: #9FE1CB; }
+  .chip-partial { background: #633806; color: #FAC775; }
+  .chip-todo    { background: #791F1F; color: #F7C1C1; }
+}
+</style>
+
+<div class="wrap">
+
+  <div class="status-bar">
+    <span class="s-pill s-done">✓ Backend AI layer exists</span>
+    <span class="s-pill s-done">✓ SSE streaming wired</span>
+    <span class="s-pill s-partial">~ Frontend service partial</span>
+    <span class="s-pill s-partial">~ Chat UI needs building</span>
+    <span class="s-pill s-todo">✗ Chat history not persisted</span>
+    <span class="s-pill s-todo">✗ JWT gap on SSE</span>
+  </div>
+
+  <!-- Phase 1 -->
+  <div class="phase">
+    <div class="phase-header" onclick="toggle(this)">
+      <span class="badge b-teal">Phase 1</span>
+      <span class="phase-title">Fix What's Broken Before Building More</span>
+      <span class="phase-meta">~1 day</span>
+      <span class="chevron open">▶</span>
+    </div>
+    <div class="phase-body">
+
+      <div class="task">
+        <div class="task-left"><div class="tdot dot-teal"></div><div class="tline"></div></div>
+        <div class="task-content">
+          <div class="task-top">
+            <span class="task-name">Persist chat history to PostgreSQL</span>
+            <span class="file-tag">ChatMessage.java (new)</span>
+            <span class="status-chip chip-todo">missing</span>
+          </div>
+          <div class="task-detail">
+            Your <code>AiChatService</code> currently stores history in a <code>ConcurrentHashMap</code> — it resets on every restart. Create a <code>ChatMessage</code> entity with fields: <code>id, userId, role (USER/ASSISTANT), content, timestamp</code>. Add <code>ChatMessageRepository extends JpaRepository</code>. Load last 10 messages per user before each Gemini call.
+          </div>
+          <div class="effort">~3 hrs</div>
+        </div>
+      </div>
+
+      <div class="task">
+        <div class="task-left"><div class="tdot dot-teal"></div><div class="tline"></div></div>
+        <div class="task-content">
+          <div class="task-top">
+            <span class="task-name">Fix the JWT gap on SSE endpoint</span>
+            <span class="file-tag">AiChatController.java</span>
+            <span class="status-chip chip-todo">critical</span>
+          </div>
+          <div class="task-detail">
+            Your frontend <code>AiChatService</code> uses <code>fetch()</code> with <code>Authorization: Bearer</code> header — this works. But <code>EventSource</code> (browser native) can't send headers. Your current <code>fetch + ReadableStream</code> approach is correct — just make sure your <code>SecurityConfig</code> allows <code>/api/ai/chat/stream</code> with JWT filter, not <code>permitAll()</code>.
+          </div>
+          <div class="warn">⚠ Do NOT use native EventSource — your existing fetch approach is the right call.</div>
+          <div class="effort">~1 hr</div>
+        </div>
+      </div>
+
+      <div class="task">
+        <div class="task-left"><div class="tdot dot-teal"></div></div>
+        <div class="task-content">
+          <div class="task-top">
+            <span class="task-name">Confirm /api/ai/chat/stream endpoint exists & returns SseEmitter</span>
+            <span class="file-tag">AiChatController.java</span>
+            <span class="status-chip chip-partial">verify</span>
+          </div>
+          <div class="task-detail">
+            Your service layer (<code>AiChatService</code>, <code>GeminiService</code>) is clearly built. Verify a <code>@RestController</code> with <code>@PostMapping("/api/ai/chat/stream")</code> actually exists and calls <code>streamProcessMessage()</code>. If not — this is a 30-min file to create.
+          </div>
+          <div class="effort">~30 min</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Phase 2 -->
+  <div class="phase">
+    <div class="phase-header" onclick="toggle(this)">
+      <span class="badge b-amber">Phase 2</span>
+      <span class="phase-title">Build the Angular Chat UI</span>
+      <span class="phase-meta">~2–3 days</span>
+      <span class="chevron">▶</span>
+    </div>
+    <div class="phase-body hidden">
+
+      <div class="task">
+        <div class="task-left"><div class="tdot dot-amber"></div><div class="tline"></div></div>
+        <div class="task-content">
+          <div class="task-top">
+            <span class="task-name">Finish AiChatService — SSE parsing is incomplete</span>
+            <span class="file-tag">ai-chat.service.ts</span>
+            <span class="status-chip chip-partial">partial</span>
+          </div>
+          <div class="task-detail">
+            Your <code>fetch + ReadableStream</code> structure exists but <code>parseSse(chunk)</code> is a stub. Implement it: split chunks by <code>\n</code>, filter lines starting with <code>data:</code>, strip the prefix, skip <code>[DONE]</code> sentinel. Handle partial chunks (a single read can split across SSE boundaries).
+          </div>
+          <div class="effort">~2 hrs</div>
+        </div>
+      </div>
+
+      <div class="task">
+        <div class="task-left"><div class="tdot dot-amber"></div><div class="tline"></div></div>
+        <div class="task-content">
+          <div class="task-top">
+            <span class="task-name">Build chat message bubble UI</span>
+            <span class="file-tag">ai-chat.component.html/css</span>
+            <span class="status-chip chip-todo">missing</span>
+          </div>
+          <div class="task-detail">
+            User messages right-aligned, AI messages left-aligned. Streaming AI message appends tokens in real-time via <code>assistantMsg.content += chunk</code> (already in your component). Add a blinking cursor <code>▍</code> during stream, remove on complete. Match your Glassmorphism CSS variables — no Bootstrap.
+          </div>
+          <div class="effort">~4 hrs</div>
+        </div>
+      </div>
+
+      <div class="task">
+        <div class="task-left"><div class="tdot dot-amber"></div><div class="tline"></div></div>
+        <div class="task-content">
+          <div class="task-top">
+            <span class="task-name">Render Task/Note cards inline in chat</span>
+            <span class="file-tag">ai-chat.component.ts</span>
+            <span class="status-chip chip-partial">partial</span>
+          </div>
+          <div class="task-detail">
+            Your <code>complete()</code> handler already tries to parse <code>res.items</code>. Build the card template: when AI returns tasks/notes, render mini-cards with title, status badge, due date — same style as your existing task list. Make them clickable to navigate to the actual item.
+          </div>
+          <div class="effort">~3 hrs</div>
+        </div>
+      </div>
+
+      <div class="task">
+        <div class="task-left"><div class="tdot dot-amber"></div></div>
+        <div class="task-content">
+          <div class="task-top">
+            <span class="task-name">Decide: floating bubble vs dedicated route</span>
+            <span class="status-chip chip-todo">decision needed</span>
+          </div>
+          <div class="task-detail">
+            Floating bubble = available everywhere, best for quick queries like "add task". Dedicated <code>/chat</code> route = better for long conversations and RAG deep-dives. Recommend: start with a <code>/chat</code> route (simpler), add floating bubble in Phase 4.
+          </div>
+          <div class="effort">~1 hr to decide + implement route</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Phase 3 -->
+  <div class="phase">
+    <div class="phase-header" onclick="toggle(this)">
+      <span class="badge b-purple">Phase 3</span>
+      <span class="phase-title">Complete the RAG + DecisionEngine</span>
+      <span class="phase-meta">~2 days</span>
+      <span class="chevron">▶</span>
+    </div>
+    <div class="phase-body hidden">
+
+      <div class="task">
+        <div class="task-left"><div class="tdot dot-purple"></div><div class="tline"></div></div>
+        <div class="task-content">
+          <div class="task-top">
+            <span class="task-name">Verify embeddings are being generated on Task/Note save</span>
+            <span class="file-tag">TaskService.java / NoteService.java</span>
+            <span class="status-chip chip-partial">verify</span>
+          </div>
+          <div class="task-detail">
+            Your <code>Task</code> and <code>Note</code> entities have the <code>embedding</code> field with <code>DoubleListConverter</code>. Confirm that when a task/note is created or updated, <code>GeminiService.getEmbedding()</code> is called and the result is saved. If not — add a <code>@PrePersist / @PreUpdate</code> hook or call it in the service layer.
+          </div>
+          <div class="effort">~2 hrs</div>
+        </div>
+      </div>
+
+      <div class="task">
+        <div class="task-left"><div class="tdot dot-purple"></div><div class="tline"></div></div>
+        <div class="task-content">
+          <div class="task-top">
+            <span class="task-name">Complete ContextBuilderService — all 3 RAG tiers</span>
+            <span class="file-tag">ContextBuilderService.java</span>
+            <span class="status-chip chip-partial">partial</span>
+          </div>
+          <div class="task-detail">
+            Tier 1 (recent items) and Tier 3 (semantic) are sketched. Implement Tier 2 (keyword match via <code>ILIKE %keyword%</code> query). Wire all three: recent → keyword → semantic, deduplicate results, format as a clean prompt context block. Cap total context at ~2000 tokens to avoid Gemini limits.
+          </div>
+          <div class="effort">~4 hrs</div>
+        </div>
+      </div>
+
+      <div class="task">
+        <div class="task-left"><div class="tdot dot-purple"></div></div>
+        <div class="task-content">
+          <div class="task-top">
+            <span class="task-name">Expand DecisionEngine — add CRUD intents</span>
+            <span class="file-tag">DecisionEngineService.java</span>
+            <span class="status-chip chip-partial">partial</span>
+          </div>
+          <div class="task-detail">
+            Currently handles list/show → <code>NON_AI</code> and summarize → <code>HYBRID</code>. Add patterns for: <code>create task "..."</code>, <code>mark X as done</code>, <code>delete note "..."</code> → <code>CRUD intent</code>. These should trigger actual DB writes, not just AI responses. This is the "Remind me to call John tomorrow" feature.
+          </div>
+          <div class="effort">~5 hrs</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Phase 4 -->
+  <div class="phase">
+    <div class="phase-header" onclick="toggle(this)">
+      <span class="badge b-blue">Phase 4</span>
+      <span class="phase-title">UX Polish & Floating Bubble</span>
+      <span class="phase-meta">~1–2 days</span>
+      <span class="chevron">▶</span>
+    </div>
+    <div class="phase-body hidden">
+
+      <div class="task">
+        <div class="task-left"><div class="tdot dot-blue"></div><div class="tline"></div></div>
+        <div class="task-content">
+          <div class="task-top">
+            <span class="task-name">Add floating chat bubble (overlay on all pages)</span>
+            <span class="file-tag">app.component.html</span>
+            <span class="status-chip chip-todo">missing</span>
+          </div>
+          <div class="task-detail">
+            Add the <code>&lt;app-ai-chat-bubble&gt;</code> to your root <code>AppComponent</code> template so it persists across routes. Fixed bottom-right position, click to expand/collapse. Glassmorphism panel slides up. Preserves conversation state via <code>ChatService</code> BehaviorSubject.
+          </div>
+          <div class="effort">~3 hrs</div>
+        </div>
+      </div>
+
+      <div class="task">
+        <div class="task-left"><div class="tdot dot-blue"></div><div class="tline"></div></div>
+        <div class="task-content">
+          <div class="task-top">
+            <span class="task-name">Suggested prompt chips</span>
+            <span class="file-tag">ai-chat.component.html</span>
+            <span class="status-chip chip-todo">missing</span>
+          </div>
+          <div class="task-detail">
+            Show clickable chips when chat is empty: "Show my high priority tasks", "Summarize my notes", "What's due this week?". Clicking a chip fires it as a message. Dramatically improves first-time discoverability.
+          </div>
+          <div class="effort">~1 hr</div>
+        </div>
+      </div>
+
+      <div class="task">
+        <div class="task-left"><div class="tdot dot-blue"></div></div>
+        <div class="task-content">
+          <div class="task-top">
+            <span class="task-name">Error states & retry UX</span>
+            <span class="file-tag">ai-chat.component.ts</span>
+            <span class="status-chip chip-todo">missing</span>
+          </div>
+          <div class="task-detail">
+            Handle: Gemini API timeout (show "AI is slow, retry?"), network drop mid-stream (partial message + error indicator), rate limit (429 → "Too many requests, wait 10s"). Your current <code>subscribe</code> has no <code>error</code> handler.
+          </div>
+          <div class="effort">~2 hrs</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Phase 5 -->
+  <div class="phase">
+    <div class="phase-header" onclick="toggle(this)">
+      <span class="badge b-coral">Phase 5</span>
+      <span class="phase-title">Production Hardening</span>
+      <span class="phase-meta">~1 day</span>
+      <span class="chevron">▶</span>
+    </div>
+    <div class="phase-body hidden">
+
+      <div class="task">
+        <div class="task-left"><div class="tdot dot-coral"></div><div class="tline"></div></div>
+        <div class="task-content">
+          <div class="task-top">
+            <span class="task-name">Rate limiting on /api/ai/chat/stream</span>
+            <span class="file-tag">SecurityConfig.java / RateLimitFilter.java</span>
+            <span class="status-chip chip-todo">missing</span>
+          </div>
+          <div class="task-detail">
+            Add a per-user rate limiter (e.g. Bucket4j) — max 20 AI requests/minute. Without this, a single user can exhaust your Gemini API quota. Return <code>429 Too Many Requests</code> with <code>Retry-After</code> header.
+          </div>
+          <div class="effort">~2 hrs</div>
+        </div>
+      </div>
+
+      <div class="task">
+        <div class="task-left"><div class="tdot dot-coral"></div><div class="tline"></div></div>
+        <div class="task-content">
+          <div class="task-top">
+            <span class="task-name">Input sanitization audit on AiChatService</span>
+            <span class="file-tag">AiChatService.java</span>
+            <span class="status-chip chip-partial">partial</span>
+          </div>
+          <div class="task-detail">
+            Your <code>safetyService.sanitizeInput()</code> is referenced but its implementation needs review. Ensure prompt injection patterns are stripped (e.g. "ignore previous instructions"). Max input length of 2000 chars. Log all safety violations with userId for audit.
+          </div>
+          <div class="effort">~2 hrs</div>
+        </div>
+      </div>
+
+      <div class="task">
+        <div class="task-left"><div class="tdot dot-coral"></div></div>
+        <div class="task-content">
+          <div class="task-top">
+            <span class="task-name">Environment config cleanup</span>
+            <span class="file-tag">application.properties / environment.ts</span>
+            <span class="status-chip chip-todo">missing</span>
+          </div>
+          <div class="task-detail">
+            Gemini API key must be in env var (<code>GEMINI_API_KEY</code>), not hardcoded. Angular <code>environment.prod.ts</code> should point to your real API URL. Add <code>.env.example</code> for onboarding. Confirm no secrets in git history.
+          </div>
+          <div class="effort">~1 hr</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<script>
+function toggle(header) {
+  const body = header.nextElementSibling;
+  const chev = header.querySelector('.chevron');
+  body.classList.toggle('hidden');
+  chev.classList.toggle('open');
+}
+</script>

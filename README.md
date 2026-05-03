@@ -1,345 +1,272 @@
-# 🧠 Life OS — Personal Productivity & Knowledge Management
+# 🧠 SecondBrain — Personal AI Life OS
 
-> A full-stack web application to manage your tasks, notes, and ideas — with an interactive knowledge graph to visualize connections between your thoughts.
+> A full-stack AI-powered productivity system that thinks with you. Built with Angular, Spring Boot, PostgreSQL, and Google Gemini.
 
----
-
-## 📖 Description
-
-**Life OS** is a personal productivity platform designed to help you organize your work, capture ideas, and discover connections between them. Whether you're tracking daily tasks, writing notes, or mapping how your ideas relate to each other, Life OS keeps everything in one place.
-
-The app is built for developers and knowledge workers who want a system that's fast, clean, and actually useful — without the bloat of traditional note-taking tools.
-
-**Why does it exist?**
-Most productivity apps treat tasks and notes as isolated silos. Life OS connects them — you can link any note to another, and the knowledge graph shows you the bigger picture of your thinking. It's a second brain you can actually navigate.
+![AI Chat](docs/screenshots/ai_chat.png)
 
 ---
 
-## ✨ Features
+## ✨ What is SecondBrain?
 
-- 🔐 **User Authentication** — Secure registration and login with JWT tokens
-- ✅ **Task Management** — Create, edit, and delete tasks with inline editing and delete confirmation
-- 📝 **Notes System** — Write and manage notes with full-text search across title and content
-- 🔗 **Note Linking** — Link notes to each other and explore backlinks
-- 🕸️ **Knowledge Graph** — An interactive force-directed graph to visually explore how your notes connect
-- 👥 **Multi-User Support** — Each user's data is fully isolated from others
-- 🔍 **Search** — Filter notes instantly by title or content
-- 📱 **Responsive Design** — Works on desktop and mobile
+SecondBrain is a personal knowledge and task management system with a built-in AI reasoning layer. Instead of a simple chatbot, it uses **Retrieval-Augmented Generation (RAG)** to give the AI real context about your tasks and notes — so it can actually help you think, not just respond.
+
+Ask it things like:
+- *"What are my high priority tasks this week?"*
+- *"Summarize my note about Project X"*
+- *"Create a task to call John tomorrow at 5 PM"*
+
+---
+
+## 🚀 Features
+
+### 🤖 AI Assistant (Gemini 2.5 Flash Lite)
+- Real-time streaming responses via **Server-Sent Events (SSE)**
+- **RAG pipeline** — AI reads your actual tasks and notes before answering
+- **Decision Engine** — routes queries intelligently (AI / Hybrid / Direct DB)
+- **Semantic search** using vector embeddings stored in PostgreSQL
+- Persistent chat history that survives server restarts
+- Agentic actions — AI can create tasks directly from chat (with confirmation)
+- Time-aware greetings (Good morning / afternoon / evening / night)
+
+### ✅ Task Management
+- Create, edit, delete tasks
+- Priority levels — Low / Medium / High with color badges
+- Due dates with overdue highlighting
+- Status lifecycle — Todo → In Progress → Done
+- "Active today" count
+
+### 📝 Knowledge Base (Notes)
+- Rich note editor with title + content
+- AI Assistant sidebar per note — Summarize, Explain, Extract actions, Improve writing
+- Semantic search across all notes
+- Auto-embedding on save for RAG retrieval
+
+### 🔐 Authentication
+- JWT-based auth with secure token storage
+- Auto-login after registration
+- Per-user data isolation — users only see their own data
+- Rate limiting on auth endpoints
+
+### 🎨 UI/UX
+- Premium **Glassmorphism** dark theme
+- Light / Dark mode toggle with OS preference detection
+- Responsive layout (desktop + tablet)
+- Real-time streaming text with typing cursor animation
+- Suggested prompt chips for new users
 
 ---
 
 ## 🛠️ Tech Stack
 
-### Backend
-| Technology | Purpose |
+| Layer | Technology |
 |---|---|
-| Java 17 | Programming language |
-| Spring Boot 4.0.2 | Backend framework |
-| Spring Security | Authentication & authorization |
-| Spring Data JPA | Database access layer |
-| PostgreSQL | Primary database |
-| JWT (jjwt 0.11.5) | Secure token-based authentication |
-| SpringDoc OpenAPI 2.3.0 | API documentation (Swagger UI) |
-| Lombok | Boilerplate reduction |
-| Maven | Build tool |
-
-### Frontend
-| Technology | Purpose |
-|---|---|
-| Angular 12 | Frontend framework |
-| TypeScript | Programming language |
-| Custom CSS | Styling (CSS variables, responsive) |
-| force-graph | Interactive knowledge graph visualization |
-
----
-
-## 📋 Prerequisites
-
-Before you begin, make sure you have the following installed on your computer:
-
-- [Java 17+](https://adoptium.net/) — Download and install JDK 17 or higher
-- [Node.js 16+](https://nodejs.org/) — Includes npm (needed for Angular)
-- [PostgreSQL 14+](https://www.postgresql.org/download/) — The database
-- [Git](https://git-scm.com/) — To clone the project
-- A code editor like [VS Code](https://code.visualstudio.com/) (recommended)
-
----
-
-## 🚀 Installation & Setup
-
-### Step 1 — Clone the Repository
-
-```bash
-git clone https://github.com/justTanmay/secondbrain.git
-cd secondbrain
-```
-
----
-
-### Step 2 — Set Up the Database
-
-1. Open your PostgreSQL client (e.g., pgAdmin or the terminal).
-2. Create a new database and user:
-
-```sql
-CREATE DATABASE secondbrain_db;
-CREATE USER secondbrain_user WITH PASSWORD 'secondbrain';
-GRANT ALL PRIVILEGES ON DATABASE secondbrain_db TO secondbrain_user;
-```
-
-> Spring Boot with `ddl-auto=update` will automatically create all tables when the backend starts — you don't need to create them manually!
-
----
-
-### Step 3 — Configure the Backend
-
-1. Navigate to the backend folder:
-
-```bash
-cd backend
-```
-
-2. Open the configuration file:
-
-```
-src/main/resources/application.properties
-```
-
-3. The default values are already set to match the database you created above:
-
-```properties
-spring.datasource.url=jdbc:postgresql://localhost:5432/secondbrain_db
-spring.datasource.username=secondbrain_user
-spring.datasource.password=secondbrain
-spring.jpa.hibernate.ddl-auto=update
-jwt.secret=secondbrain-secret-key-which-is-very-secure
-```
-
-> ⚠️ **For production**, never use these default values. Override them with environment variables and activate the `prod` profile.
-
----
-
-### Step 4 — Run the Backend
-
-From inside the `backend` folder, run:
-
-```bash
-# On Mac/Linux
-./mvnw spring-boot:run
-
-# On Windows
-mvnw.cmd spring-boot:run
-```
-
-You should see the server start on **http://localhost:8080**
-
-Swagger UI (interactive API docs): **http://localhost:8080/swagger-ui.html**
-
-> The first run will take a few minutes as Maven downloads all dependencies.
-
----
-
-### Step 5 — Run the Frontend
-
-Open a **new terminal** and navigate to the frontend folder:
-
-```bash
-cd frontend/secondbrain-frontend
-```
-
-Install dependencies (first time only):
-
-```bash
-npm install
-```
-
-Start the development server:
-
-```bash
-npm start
-```
-
-The app will open at **http://localhost:4200** 🎉
-
----
-
-## 🖥️ Usage
-
-1. **Login** — Go to `http://localhost:4200` and sign in. (Registration is handled directly via the API for now — see the API section below.)
-
-2. **Manage Tasks** — Click **Tasks** in the top nav to create, edit, and delete your tasks.
-
-3. **Write Notes** — Click **Notes** in the top nav to create notes. Use the search bar to find notes by title or content.
-
-4. **Link Notes** — On any note card, click **Link** to connect it to another note using its ID.
-
-5. **Explore the Graph** — Click **Graph** in the top nav to open the knowledge graph. Each node is a note; arrows show connections. Click a node to open that note.
-
----
-
-## 📁 Folder Structure
-
-```
-secondbrain/
-│
-├── backend/                         # Spring Boot backend
-│   ├── Dockerfile                   # Multi-stage production Docker build
-│   ├── pom.xml                      # Maven dependencies
-│   └── src/main/java/com/example/backend/
-│       ├── controller/              # REST API endpoints
-│       │   ├── AuthController.java
-│       │   ├── TaskController.java
-│       │   ├── NoteController.java
-│       │   └── NoteLinkController.java
-│       ├── service/                 # Business logic
-│       ├── repository/              # Database queries (JPA)
-│       ├── model/                   # Database entity models
-│       ├── dto/                     # Data transfer objects
-│       ├── security/                # JWT filter, util, and SecurityConfig
-│       ├── exception/               # Global error handling
-│       └── config/                  # OpenAPI / Swagger configuration
-│   └── src/main/resources/
-│       ├── application.properties   # Default (local) configuration
-│       └── application-prod.properties  # Production configuration
-│
-└── frontend/secondbrain-frontend/   # Angular frontend
-    └── src/app/
-        ├── core/                    # Guards and HTTP interceptors
-        │   ├── guards/              # AuthGuard (route protection)
-        │   └── interceptors/        # JwtInterceptor (auto-attach token)
-        ├── features/                # Pages and feature modules
-        │   ├── auth/                # Login component & AuthService
-        │   ├── tasks/               # Task list component & TaskService
-        │   └── notes/               # Note list, note graph & NoteService
-        └── environments/            # API URL configuration (local / prod)
-```
+| Frontend | Angular 12, TypeScript, Vanilla CSS |
+| Backend | Spring Boot 3.4, Java 17 |
+| Database | PostgreSQL |
+| AI | Google Gemini 2.5 Flash Lite |
+| Auth | JWT (JSON Web Tokens) |
+| Streaming | Server-Sent Events (SSE) |
+| Embeddings | Gemini Embedding API + DoubleListConverter |
+| Build | Maven, Angular CLI |
 
 ---
 
 ## 📸 Screenshots
 
-> _Screenshots coming soon!_
-
-| Page | Preview |
+| Login | Tasks |
 |---|---|
-| Login | ![Login](docs/screenshots/login.png) |
-| Tasks | ![Tasks](docs/screenshots/tasks.png) |
-| Notes | ![Notes](docs/screenshots/notes.png) |
-| Notes | ![Notes](docs/screenshots/notes2.png) |
-| Knowledge Graph | ![Graph](docs/screenshots/graph.png) |
+| ![Login](docs/screenshots/login.png) | ![Tasks](docs/screenshots/tasks.png) |
+
+| Notes | Note Detail + AI |
+|---|---|
+| ![Notes](docs/screenshots/notes.png) | ![Note Detail](docs/screenshots/note_detail.png) |
+
+| AI Chat | AI Task Creation |
+|---|---|
+| ![AI Chat](docs/screenshots/ai_chat.png) | ![AI Action](docs/screenshots/ai_chat_action.png) |
 
 ---
 
-## 🔌 API Overview
+## 🏗️ Architecture
 
-The backend exposes a REST API. All endpoints except auth require an `Authorization: Bearer <token>` header.
+```
+secondBrain/
+├── backend/                          # Spring Boot application
+│   └── src/main/java/com/example/backend/
+│       ├── ai/                       # AI orchestration layer
+│       │   ├── AiChatService.java    # Main AI pipeline
+│       │   ├── DecisionEngineService.java  # Intent routing
+│       │   ├── ContextBuilderService.java  # RAG context assembly
+│       │   ├── GeminiService.java    # Gemini API client (SSE)
+│       │   ├── EmbeddingService.java # Vector embeddings
+│       │   ├── SafetyService.java    # Input sanitization
+│       │   ├── SemanticCacheService.java   # Response caching
+│       │   └── PromptBuilder.java    # System prompt construction
+│       ├── controller/               # REST API endpoints
+│       ├── service/                  # Business logic
+│       ├── model/                    # JPA entities
+│       ├── repository/               # Spring Data repositories
+│       ├── security/                 # JWT auth + rate limiting
+│       └── dto/                      # Data transfer objects
+│
+└── frontend/                         # Angular application
+    └── src/app/
+        ├── features/
+        │   ├── ai-chat/              # AI chat page + streaming
+        │   ├── tasks/                # Task management
+        │   ├── notes/                # Notes list + detail editor
+        │   └── auth/                 # Login + Register
+        └── core/
+            ├── guards/               # Auth route guards
+            └── interceptors/         # JWT HTTP interceptor
+```
+
+---
+
+## ⚙️ Getting Started
+
+### Prerequisites
+- Java 17+
+- Node.js 18+
+- PostgreSQL 14+
+- Google Gemini API key ([Get one free here](https://aistudio.google.com/))
+
+### 1. Clone the repo
+```bash
+git clone https://github.com/tanmayythakare/secondbrain.git
+cd secondbrain
+```
+
+### 2. Set up the database
+```sql
+CREATE DATABASE secondbrain_db;
+CREATE USER secondbrain_user WITH PASSWORD 'your_password';
+GRANT ALL PRIVILEGES ON DATABASE secondbrain_db TO secondbrain_user;
+```
+
+### 3. Configure the backend
+Edit `backend/src/main/resources/application.properties`:
+```properties
+spring.datasource.url=jdbc:postgresql://localhost:5432/secondbrain_db
+spring.datasource.username=secondbrain_user
+spring.datasource.password=your_password
+
+jwt.secret=your_jwt_secret_key_here
+
+app.ai.gemini.key=your_gemini_api_key_here
+app.ai.gemini.model=gemini-2.5-flash-lite
+app.ai.gemini.endpoint=https://generativelanguage.googleapis.com/v1beta/models/
+```
+
+### 4. Run the backend
+```bash
+cd backend
+./mvnw spring-boot:run
+```
+Backend runs on `http://localhost:8080`
+
+### 5. Run the frontend
+```bash
+cd frontend/secondbrain-frontend
+npm install
+ng serve
+```
+Frontend runs on `http://localhost:4200`
+
+### 6. Open the app
+Visit `http://localhost:4200` — register an account and start using SecondBrain.
+
+---
+
+## 🔌 API Endpoints
 
 | Method | Endpoint | Description |
 |---|---|---|
-| POST | `/api/auth/register` | Register a new user |
-| POST | `/api/auth/login` | Login and receive a JWT token |
-| GET | `/api/tasks` | Get all tasks for the current user |
-| POST | `/api/tasks` | Create a new task |
-| PUT | `/api/tasks/{id}` | Update a task |
-| DELETE | `/api/tasks/{id}` | Delete a task |
-| GET | `/api/notes` | Get all notes for the current user |
-| POST | `/api/notes` | Create a new note |
-| PUT | `/api/notes/{id}` | Update a note |
-| DELETE | `/api/notes/{id}` | Delete a note |
-| GET | `/api/notes/search?q={query}` | Full-text search across notes |
-| POST | `/api/note-links?sourceId=X&targetId=Y` | Link two notes |
-| GET | `/api/note-links/{noteId}` | Get notes linked from this note |
-| GET | `/api/note-links/backlinks/{noteId}` | Get notes that link to this note |
-
-> Full interactive docs available at: **http://localhost:8080/swagger-ui.html**
+| POST | `/api/auth/register` | Register new user |
+| POST | `/api/auth/login` | Login, returns JWT |
+| GET | `/api/tasks` | Get all tasks |
+| POST | `/api/tasks` | Create task |
+| PUT | `/api/tasks/{id}` | Update task |
+| DELETE | `/api/tasks/{id}` | Delete task |
+| GET | `/api/notes` | Get all notes |
+| POST | `/api/notes` | Create note |
+| PUT | `/api/notes/{id}` | Update note |
+| DELETE | `/api/notes/{id}` | Delete note |
+| GET | `/api/notes/search?q=` | Semantic search notes |
+| POST | `/api/ai/chat/stream` | AI chat (SSE stream) |
+| GET | `/api/ai/chat/history` | Get chat history |
+| POST | `/api/ai/chat/confirm` | Execute agentic action |
 
 ---
 
-## 🔮 Future Improvements
+## 🧠 How the AI Works
 
-Here are some features planned for future versions:
-
-- [ ] 📝 Registration page in the UI (currently API-only)
-- [ ] 🌙 Dark mode support
-- [ ] 🏷️ Tags and categories for notes and tasks
-- [ ] 📅 Task due dates and priority levels in the UI
-- [ ] 🔁 Recurring tasks support
-- [ ] 📤 Export notes as Markdown or PDF
-- [ ] 🔔 Notifications and reminders
-- [ ] 📊 Analytics dashboard (task completion trends, note activity)
-
----
-
-## 🤝 Contributing
-
-Contributions are welcome! Here's how to get started:
-
-1. **Fork** the repository on GitHub
-2. **Clone** your fork locally:
-   ```bash
-   git clone https://github.com/your-username/secondbrain.git
-   ```
-3. **Create a new branch** for your feature:
-   ```bash
-   git checkout -b feature/your-feature-name
-   ```
-4. **Make your changes** and commit them:
-   ```bash
-   git commit -m "Add: description of your change"
-   ```
-5. **Push** to your fork:
-   ```bash
-   git push origin feature/your-feature-name
-   ```
-6. Open a **Pull Request** on GitHub
-
-### Guidelines
-- Follow the existing code style
-- Write clear commit messages
-- Test your changes before submitting
-- Keep pull requests focused on one feature or fix
+```
+User Message
+     │
+     ▼
+SafetyService ──── (blocks harmful input)
+     │
+     ▼
+DecisionEngine ─── (AI / Hybrid / Direct DB / Action)
+     │
+     ├── NON_AI ──► Direct DB query → instant response
+     │
+     ├── ACTION ──► Extract payload → Confirm button → Execute
+     │
+     └── AI/HYBRID ──► ContextBuilder (RAG)
+                              │
+                        ┌─────┴──────┐
+                     Recent      Semantic
+                     Items       Search
+                        └─────┬──────┘
+                              │
+                         PromptBuilder
+                              │
+                         GeminiService
+                         (SSE Stream)
+                              │
+                         Frontend renders
+                         token by token
+```
 
 ---
 
-## 🐛 Known Issues / Troubleshooting
+## 🔒 Security
 
-**"Cannot connect to server" on login**
-→ Make sure the backend is running on port 8080 and PostgreSQL is running.
-
-**"Access Denied" errors after a while**
-→ Your JWT token has expired (24-hour expiry). Log out and log back in.
-
-**Build fails with Java version error**
-→ Make sure you have Java 17 or higher installed. Run `java -version` to check.
-
-**npm install fails**
-→ Try deleting the `node_modules` folder and running `npm install` again.
-
-**Knowledge graph is empty**
-→ You need to create at least two notes and link them together before the graph will show connections.
+- All endpoints (except `/api/auth/**`) require a valid JWT
+- Passwords hashed with BCrypt
+- Rate limiting on auth and AI endpoints
+- Input sanitization before AI processing
+- Per-user data isolation enforced at service layer
+- Environment variables for all secrets
 
 ---
 
-## 📄 License
+## 📋 What I Learned Building This
 
-This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.
+This project was built to learn and demonstrate:
 
-You are free to use, modify, and distribute this project for personal or commercial use.
+- **Full-stack development** with Angular + Spring Boot
+- **AI integration** — not just calling an API, but building a proper RAG pipeline
+- **Streaming UIs** — Server-Sent Events for real-time token streaming
+- **Vector embeddings** — storing and querying semantic vectors in PostgreSQL
+- **JWT authentication** — stateless auth with Spring Security
+- **Production practices** — error handling, rate limiting, data isolation, environment config
 
 ---
 
 ## 👤 Author
 
 **Tanmay Thakare**
-
-- GitHub: [@justTanmay](https://github.com/justTanmay)
-- LinkedIn: [linkedin.com/in/tanmaythakare](https://www.linkedin.com/in/tanmaythakare/)
-- Email: tanmayrthakare@gmail.com
+- GitHub: [@tanmayythakare](https://github.com/tanmayythakare)
 
 ---
 
-<div align="center">
+## 📄 License
 
-Made with ❤️ and ☕ | If you find this project useful, please ⭐ star the repository!
+This project is open source and available under the [MIT License](LICENSE).
 
-</div>
+---
+
+<p align="center">Built with ☕ and a lot of debugging</p>

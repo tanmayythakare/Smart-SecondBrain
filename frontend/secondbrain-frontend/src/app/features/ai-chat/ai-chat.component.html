@@ -1,0 +1,115 @@
+<div class="ai-page-layout page-content">
+  <!-- Left Sidebar (20%) -->
+  <aside class="sidebar left-sidebar">
+    <div class="widget-section">
+      <span class="section-label">UPCOMING</span>
+      <div *ngFor="let task of upcomingTasks" class="widget-card">
+        <span class="widget-task-title">{{ task.title }}</span>
+        <span class="widget-task-time">{{ task.time }}</span>
+      </div>
+    </div>
+
+    <div class="widget-section">
+      <span class="section-label">MEMORY INSIGHT</span>
+      <div class="widget-card insight">
+        <p class="insight-text">"{{ memoryInsight }}"</p>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Center (60%) -->
+  <main class="chat-main">
+    <div class="chat-header">
+      <div class="ai-status">
+        <div class="status-dot"></div>
+        <span>AI Core</span>
+      </div>
+      <h2>AI Assistant</h2>
+    </div>
+
+    <div class="messages-container" #scrollContainer>
+      <div *ngFor="let msg of messages" class="message-row" [ngClass]="msg.role">
+        <!-- AI Avatar -->
+        <div *ngIf="msg.role === 'assistant'" class="avatar assistant-avatar">AI</div>
+        
+        <div class="message-bubble" [ngClass]="msg.role">
+          <p [class.streaming]="msg.isStreaming">{{ msg.displayContent || msg.content }}</p>
+          
+          <div *ngIf="msg.items && msg.items.length > 0" class="linked-items">
+            <div *ngFor="let item of msg.items" class="linked-item-pill" 
+                 [routerLink]="item.type === 'task' ? ['/tasks'] : ['/notes']">
+              <div class="pill-bullet"></div>
+              <span class="pill-title">{{ item.title }}</span>
+              <span class="pill-type">{{ item.type }}</span>
+            </div>
+          </div>
+          
+          <div *ngIf="msg.action" class="action-confirmation">
+            <button class="confirm-btn" (click)="onConfirmAction(msg)">
+              Confirm Action
+            </button>
+            <button class="cancel-btn" (click)="msg.action = null">
+              Cancel
+            </button>
+          </div>
+
+          <span class="timestamp" *ngIf="msg.role === 'assistant'">
+            AI ASSISTANT • {{ msg.timestamp | date:'shortTime' | uppercase }}
+          </span>
+          <span class="timestamp" *ngIf="msg.role === 'user'">
+            {{ msg.timestamp | date:'shortTime' }}
+          </span>
+          
+          <div *ngIf="msg.role === 'assistant' && msg.canHaveFeedback" class="message-feedback">
+            <button (click)="submitFeedback(msg, true)" title="Helpful" 
+                    [class.active-feedback]="msg.hasFeedback && msg.isPositiveFeedback">
+              <i data-lucide="thumbs-up"></i>
+            </button>
+            <button (click)="submitFeedback(msg, false)" title="Not helpful"
+                    [class.active-feedback]="msg.hasFeedback && !msg.isPositiveFeedback">
+              <i data-lucide="thumbs-down"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- User Avatar -->
+        <div *ngIf="msg.role === 'user'" class="avatar user-avatar">{{ getUserInitial() }}</div>
+      </div>
+
+      <!-- Removed redundant isLoading row to fix duplicate processing message -->
+      <div class="suggested-prompts" *ngIf="messages.length === 0 && !isLoading">
+        <button *ngFor="let chip of suggestedChips" (click)="userInput = chip; onInput(); sendMessage()">
+          {{ chip }}
+        </button>
+      </div>
+    </div>
+
+    <div class="input-area">
+      <div class="input-container">
+        <textarea 
+          #chatInput
+          [(ngModel)]="userInput" 
+          (input)="onInput()"
+          (keydown.enter)="sendMessage(); $event.preventDefault()"
+          placeholder="Ask about your tasks, notes, or anything..."
+          rows="1">
+        </textarea>
+        <button class="send-btn" (click)="sendMessage()" [disabled]="!userInput || isLoading">
+          <i data-lucide="send"></i>
+        </button>
+      </div>
+      <span class="input-hint">SHIFT + ENTER FOR NEWLINE</span>
+    </div>
+  </main>
+
+  <!-- Right Sidebar (20%) -->
+  <aside class="sidebar right-sidebar">
+    <div class="widget-section">
+      <span class="section-label">RELATED NOTE</span>
+      <div class="widget-card note-widget">
+        <span class="widget-note-title">{{ relatedNote.title }}</span>
+        <span class="widget-note-meta">Last edited {{ relatedNote.lastEdited }}</span>
+      </div>
+    </div>
+  </aside>
+</div>

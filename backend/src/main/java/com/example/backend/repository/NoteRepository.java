@@ -13,15 +13,19 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 public interface NoteRepository extends JpaRepository<Note, Long> {
 
-    List<Note> findByUser(User user);
+    Page<Note> findByUser(User user, Pageable pageable);
     @Query("""
     		  SELECT n FROM Note n
     		  WHERE n.user = :user
     		    AND (LOWER(n.title) LIKE LOWER(CONCAT('%', :q, '%'))
     		      OR LOWER(n.content) LIKE LOWER(CONCAT('%', :q, '%')))
     		""")
-    		List<Note> searchByUser(@Param("user") User user, @Param("q") String q);
+    Page<Note> searchByUser(@Param("user") User user, @Param("q") String q, Pageable pageable);
+    boolean existsByIdAndUser(Long id, User user);
 
 }

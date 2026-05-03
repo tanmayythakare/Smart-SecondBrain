@@ -3,9 +3,15 @@ package com.example.backend.model;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
+import com.example.backend.util.DoubleListConverter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.util.List;
 
 @Entity
+@Table(name = "notes", indexes = {
+    @Index(name = "idx_note_user", columnList = "user_id"),
+    @Index(name = "idx_note_created_at", columnList = "createdAt")
+})
 public class Note {
 
     @Id
@@ -27,6 +33,10 @@ public class Note {
 
     @Column
     private LocalDateTime updatedAt;
+
+    @Convert(converter = DoubleListConverter.class)
+    @Column(columnDefinition = "TEXT")
+    private List<Double> embedding;
 
     /* ======================
        JPA Lifecycle Hooks
@@ -81,5 +91,13 @@ public class Note {
 
     public LocalDateTime getUpdatedAt() {
         return updatedAt;
+    }
+
+    public List<Double> getEmbedding() {
+        return embedding;
+    }
+
+    public void setEmbedding(List<Double> embedding) {
+        this.embedding = embedding;
     }
 }

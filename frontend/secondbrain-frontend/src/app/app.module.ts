@@ -8,14 +8,16 @@ import { JwtInterceptor } from './core/interceptors/jwt.interceptor';
 import { TaskListComponent } from './features/tasks/task-list/task-list.component';
 import { FormsModule } from '@angular/forms';
 import { NoteListComponent } from './features/notes/note-list/note-list.component';
-import { NoteGraphComponent } from './features/notes/note-graph/note-graph.component';
+import { NoteDetailComponent } from './features/notes/note-detail/note-detail.component';
+import { AiChatComponent } from './features/ai-chat/ai-chat.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     TaskListComponent,
     NoteListComponent,
-    NoteGraphComponent
+    NoteDetailComponent,
+    AiChatComponent
   ],
   imports: [
     BrowserModule,

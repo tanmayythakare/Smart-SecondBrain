@@ -1,0 +1,500 @@
+
+
+// ========================================
+// FILE: frontend/secondbrain-frontend/src/app/features/notes/note-detail/note-detail.component.html
+// ========================================
+
+<div class="note-detail-page" *ngIf="note">
+  <!-- Top Bar -->
+  <header class="detail-header">
+    <div class="breadcrumb">
+      <span [routerLink]="['/notes']">Notes</span>
+      <span class="separator">/</span>
+      <span class="current">{{ note.title }}</span>
+    </div>
+    
+    <div class="header-actions">
+      <button class="ghost-btn">Share</button>
+      <button class="primary-btn" (click)="saveNote()">Save Changes</button>
+    </div>
+  </header>
+
+  <div class="detail-layout">
+    <!-- Main Content Area (Left) -->
+    <main class="note-body">
+      <!-- Tags Row -->
+      <div class="tags-row">
+        <span class="tag-pill WORK">WORK</span>
+        <span class="tag-pill outline">HIGH PRIORITY</span>
+      </div>
+
+      <!-- Title -->
+      <h1 class="note-full-title" contenteditable="true" (blur)="onTitleBlur($event)">
+        {{ note.title }}
+      </h1>
+
+      <!-- Content Area -->
+      <div class="note-content-editor" contenteditable="true" (input)="onContentInput($event)">
+        {{ note.content }}
+      </div>
+
+      <!-- Section Headers Example (Mocked for visual) -->
+      <div class="note-sections">
+        <h2 class="section-title">Key Objectives</h2>
+        <ul class="bullet-list">
+          <li>Establish core vector search pipeline for RAG</li>
+          <li>Design unified state management for AI context</li>
+          <li>Implement real-time streaming for reasoning tokens</li>
+        </ul>
+
+        <h2 class="section-title">Stakeholders</h2>
+        <div class="quote-card">
+          <span class="quote-label">Note from Sarah:</span>
+          <p class="quote-text">"Make sure the memory service handles asynchronous history summarization before the v1.2 release."</p>
+        </div>
+      </div>
+    </main>
+
+    <!-- Note Assistant Sidebar (Right) -->
+    <aside class="note-assistant-sidebar">
+      <h3>Note Assistant</h3>
+      <div class="assistant-actions">
+        <button class="action-card" (click)="aiAssist('Summarize this note')">
+          <span>Summarize this note</span>
+        </button>
+        <button class="action-card" (click)="aiAssist('Explain key concepts')">
+          <span>Explain key concepts</span>
+        </button>
+        <button class="action-card" (click)="aiAssist('Extract action items')">
+          <span>Extract action items</span>
+        </button>
+      </div>
+
+      <div class="assistant-input-container">
+        <input type="text" placeholder="Ask about this note..." [(ngModel)]="assistantQuery" (keyup.enter)="askAssistant()">
+        <button class="send-btn" (click)="askAssistant()">
+          <i class="lucide-send"></i>
+        </button>
+      </div>
+    </aside>
+  </div>
+</div>
+
+
+// ========================================
+// FILE: frontend/secondbrain-frontend/src/app/features/notes/note-detail/note-detail.component.ts
+// ========================================
+
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { NoteService, Note } from '../note.service';
+
+@Component({
+  selector: 'app-note-detail',
+  templateUrl: './note-detail.component.html',
+  styleUrls: ['./note-detail.component.css']
+})
+export class NoteDetailComponent implements OnInit {
+
+  note: Note | null = null;
+  assistantQuery = '';
+  isAiLoading = false;
+
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private noteService: NoteService
+  ) {}
+
+  ngOnInit(): void {
+    const id = this.route.snapshot.paramMap.get('id');
+    if (id) {
+      this.loadNote(Number(id));
+    }
+  }
+
+  loadNote(id: number) {
+    this.noteService.getNoteById(id).subscribe({
+      next: (note) => {
+        this.note = note;
+      },
+      error: (err) => {
+        console.error('Failed to load note', err);
+        this.router.navigate(['/notes']);
+      }
+    });
+  }
+
+  onTitleBlur(event: any) {
+    if (this.note) {
+      this.note.title = event.target.innerText;
+    }
+  }
+
+  onContentInput(event: any) {
+    if (this.note) {
+      this.note.content = event.target.innerText;
+    }
+  }
+
+  saveNote() {
+    if (!this.note) return;
+    this.noteService.updateNote(this.note.id, this.note.title, this.note.content).subscribe({
+      next: () => {
+        console.log('Note saved successfully');
+      }
+    });
+  }
+
+  aiAssist(instruction: string) {
+    if (!this.note || this.isAiLoading) return;
+    this.isAiLoading = true;
+    this.noteService.assistNote(this.note.content, instruction).subscribe({
+      next: (res) => {
+        if (this.note) {
+          this.note.content = res.result;
+        }
+        this.isAiLoading = false;
+      },
+      error: () => {
+        this.isAiLoading = false;
+      }
+    });
+  }
+
+  askAssistant() {
+    if (!this.assistantQuery.trim()) return;
+    this.aiAssist(this.assistantQuery);
+    this.assistantQuery = '';
+  }
+}
+
+
+// ========================================
+// FILE: frontend/secondbrain-frontend/src/app/features/notes/note-detail/note-detail.component.css
+// ========================================
+
+.note-detail-page {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 40px;
+}
+
+.detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 48px;
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+.breadcrumb span:first-child {
+  cursor: pointer;
+}
+
+.breadcrumb span:first-child:hover {
+  color: white;
+}
+
+.breadcrumb .separator {
+  opacity: 0.5;
+}
+
+.breadcrumb .current {
+  color: #d1d5db;
+}
+
+.header-actions {
+  display: flex;
+  gap: 16px;
+}
+
+.ghost-btn {
+  background: transparent;
+  color: var(--text-muted);
+  border: 1px solid var(--border-color);
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+}
+
+.primary-btn {
+  background: var(--primary-500);
+  color: white;
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+}
+
+/* Layout */
+.detail-layout {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 64px;
+}
+
+.note-body {
+  max-width: 800px;
+}
+
+.tags-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.tag-pill {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  border-radius: var(--radius-pill);
+}
+
+.tag-pill.WORK {
+  background: rgba(99, 102, 241, 0.1);
+  color: var(--primary-500);
+}
+
+.tag-pill.outline {
+  border: 1px solid white;
+  color: white;
+}
+
+.note-full-title {
+  font-size: 3.5rem;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 40px;
+  line-height: 1.1;
+  outline: none;
+}
+
+.note-content-editor {
+  font-size: 1.125rem;
+  color: #d1d5db;
+  line-height: 1.8;
+  outline: none;
+  min-height: 200px;
+  margin-bottom: 64px;
+}
+
+/* Rich Elements */
+.section-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: white;
+  margin: 48px 0 24px;
+  padding-left: 16px;
+  border-left: 3px solid var(--primary-500);
+}
+
+.bullet-list {
+  padding-left: 20px;
+  color: #9ca3af;
+  margin-bottom: 32px;
+}
+
+.bullet-list li {
+  margin-bottom: 12px;
+}
+
+.quote-card {
+  background: #161616;
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  margin-top: 32px;
+}
+
+.quote-label {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--primary-500);
+  display: block;
+  margin-bottom: 8px;
+}
+
+.quote-text {
+  font-style: italic;
+  color: #d1d5db;
+  line-height: 1.6;
+}
+
+/* Sidebar */
+.note-assistant-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.note-assistant-sidebar h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: white;
+}
+
+.assistant-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.action-card {
+  background: #161616;
+  border: 1px solid var(--border-color);
+  padding: 16px;
+  border-radius: var(--radius-lg);
+  color: white;
+  text-align: left;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.action-card:hover {
+  background: #1e1e3f;
+  border-color: var(--primary-500);
+}
+
+.assistant-input-container {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #161616;
+  padding: 8px 12px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-color);
+}
+
+.assistant-input-container input {
+  background: transparent;
+  border: none;
+  font-size: 0.875rem;
+  padding: 8px 0;
+  color: white;
+}
+
+.send-btn {
+  width: 32px;
+  height: 32px;
+  background: var(--primary-500);
+  border-radius: 8px;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (max-width: 1100px) {
+  .detail-layout {
+    grid-template-columns: 1fr;
+  }
+  .note-assistant-sidebar {
+    display: none;
+  }
+}
+
+
+// ========================================
+// FILE: frontend/secondbrain-frontend/src/app/app.module.ts
+// ========================================
+
+import { NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
+import { HttpClientModule } from '@angular/common/http';
+import { AppRoutingModule } from './app-routing.module';
+import { AppComponent } from './app.component';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { JwtInterceptor } from './core/interceptors/jwt.interceptor';
+import { TaskListComponent } from './features/tasks/task-list/task-list.component';
+import { FormsModule } from '@angular/forms';
+import { NoteListComponent } from './features/notes/note-list/note-list.component';
+import { NoteDetailComponent } from './features/notes/note-detail/note-detail.component';
+import { AiChatComponent } from './features/ai-chat/ai-chat.component';
+
+@NgModule({
+  declarations: [
+    AppComponent,
+    TaskListComponent,
+    NoteListComponent,
+    NoteDetailComponent,
+    AiChatComponent
+  ],
+  imports: [
+    BrowserModule,
+    AppRoutingModule,
+    HttpClientModule,
+    FormsModule
+  ],
+  providers: [
+    { provide: HTTP_INTERCEPTORS,
+      useClass: JwtInterceptor, multi: true 
+    }
+  ],
+  bootstrap: [AppComponent]
+})
+export class AppModule { }
+
+
+// ========================================
+// FILE: frontend/secondbrain-frontend/src/app/app-routing.module.ts
+// ========================================
+
+import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
+import { TaskListComponent } from './features/tasks/task-list/task-list.component';
+import { AuthGuard } from './core/guards/auth.guard';
+import { NoteListComponent } from './features/notes/note-list/note-list.component';
+import { NoteDetailComponent } from './features/notes/note-detail/note-detail.component';
+import { AiChatComponent } from './features/ai-chat/ai-chat.component';
+
+const routes: Routes = [
+  {
+    path: 'auth',
+    loadChildren: () =>
+      import('./features/auth/auth.module').then(m => m.AuthModule)
+  },
+  {
+    path: 'tasks',
+    component: TaskListComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'ai',
+    component: AiChatComponent,
+    canActivate: [AuthGuard]
+  },
+
+  {
+    path: 'notes/:id',
+    component: NoteDetailComponent,
+    canActivate: [AuthGuard]
+  },
+   {
+    path: 'notes',
+    component: NoteListComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: '',
+    redirectTo: 'auth/login',
+    pathMatch: 'full'
+  },
+  {
+    path: '**',
+    redirectTo: 'auth/login'
+  }
+];
+
+@NgModule({
+  imports: [RouterModule.forRoot(routes)],
+  exports: [RouterModule]
+})
+export class AppRoutingModule {}

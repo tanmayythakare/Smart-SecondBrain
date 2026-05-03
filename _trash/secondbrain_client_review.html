@@ -1,0 +1,159 @@
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+.wrap { padding: 20px 0; font-family: var(--font-sans); }
+.screen-section { margin-bottom: 24px; }
+.screen-title { font-size: 13px; font-weight: 500; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: 0.05em; padding: 0 0 10px 0; border-bottom: 0.5px solid var(--color-border-tertiary); margin-bottom: 12px; }
+.issue { display: flex; gap: 10px; padding: 10px 0; border-bottom: 0.5px solid var(--color-border-tertiary); align-items: flex-start; }
+.issue:last-child { border-bottom: none; }
+.sev { font-size: 10px; font-weight: 500; padding: 2px 8px; border-radius: 10px; white-space: nowrap; margin-top: 2px; flex-shrink: 0; }
+.critical { background: #FCEBEB; color: #A32D2D; }
+.major    { background: #FAEEDA; color: #854F0B; }
+.minor    { background: #E6F1FB; color: #185FA5; }
+.polish   { background: #F1EFE8; color: #5F5E5A; }
+@media (prefers-color-scheme: dark) {
+  .critical { background: #791F1F; color: #F7C1C1; }
+  .major    { background: #633806; color: #FAC775; }
+  .minor    { background: #0C447C; color: #B5D4F4; }
+  .polish   { background: #444441; color: #D3D1C7; }
+}
+.issue-body { flex: 1; }
+.issue-title { font-size: 13px; font-weight: 500; color: var(--color-text-primary); line-height: 1.4; }
+.issue-detail { font-size: 12px; color: var(--color-text-secondary); margin-top: 3px; line-height: 1.6; }
+.issue-detail code { font-family: var(--font-mono); font-size: 11px; background: var(--color-background-tertiary); padding: 1px 4px; border-radius: 3px; color: var(--color-text-primary); }
+.score-bar { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
+.score-card { flex: 1; min-width: 100px; padding: 12px 14px; border-radius: var(--border-radius-lg); border: 0.5px solid var(--color-border-tertiary); background: var(--color-background-secondary); }
+.score-label { font-size: 11px; color: var(--color-text-tertiary); }
+.score-val { font-size: 20px; font-weight: 500; color: var(--color-text-primary); margin-top: 2px; }
+.legend { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; font-size: 11px; }
+.leg { display: flex; align-items: center; gap: 5px; color: var(--color-text-secondary); }
+.leg-dot { width: 8px; height: 8px; border-radius: 50%; }
+.section-toggle { cursor: pointer; user-select: none; }
+.section-toggle:hover .screen-title { color: var(--color-text-primary); }
+.chevron { font-size: 10px; color: var(--color-text-tertiary); margin-left: 6px; transition: transform 0.2s; }
+.chevron.open { transform: rotate(90deg); }
+.issues-list.hidden { display: none; }
+.verdict { padding: 14px 16px; border-radius: var(--border-radius-lg); border: 0.5px solid var(--color-border-tertiary); background: var(--color-background-secondary); margin-bottom: 20px; font-size: 13px; color: var(--color-text-secondary); line-height: 1.7; }
+.verdict strong { color: var(--color-text-primary); font-weight: 500; }
+</style>
+
+<div class="wrap">
+
+<div class="verdict">
+<strong>Verdict:</strong> The visual design is genuinely premium — glassmorphism, dark theme, and typography are all strong. But there are <strong>2 critical functional gaps</strong> (notes creation broken, sidebar data is fake), <strong>several major UX issues</strong> (user avatar shows "U", no priority/status on tasks, no empty state guidance), and <strong>many small polish issues</strong> that together make it feel unfinished. This is an 80% product pretending to be 100%.
+</div>
+
+<div class="score-bar">
+  <div class="score-card"><div class="score-label">Visual design</div><div class="score-val">8.5/10</div></div>
+  <div class="score-card"><div class="score-label">Functionality</div><div class="score-val">5/10</div></div>
+  <div class="score-card"><div class="score-label">UX / usability</div><div class="score-val">6/10</div></div>
+  <div class="score-card"><div class="score-label">Content quality</div><div class="score-val">6/10</div></div>
+  <div class="score-card"><div class="score-label">Overall</div><div class="score-val">6.5/10</div></div>
+</div>
+
+<div class="legend">
+  <div class="leg"><div class="leg-dot" style="background:#E24B4A"></div>Critical — broken</div>
+  <div class="leg"><div class="leg-dot" style="background:#BA7517"></div>Major — bad UX</div>
+  <div class="leg"><div class="leg-dot" style="background:#378ADD"></div>Minor — needs fix</div>
+  <div class="leg"><div class="leg-dot" style="background:#888780"></div>Polish — small detail</div>
+</div>
+
+<!-- Register -->
+<div class="screen-section">
+  <div class="section-toggle" onclick="toggle(this)">
+    <div class="screen-title">Register screen <span class="chevron open">▶</span></div>
+  </div>
+  <div class="issues-list">
+    <div class="issue"><span class="sev minor">minor</span><div class="issue-body"><div class="issue-title">No password strength indicator</div><div class="issue-detail">Password field accepts anything silently. No minimum length hint, no strength meter. User has no idea if "abc" is valid until they hit submit and potentially get a cryptic error.</div></div></div>
+    <div class="issue"><span class="sev minor">minor</span><div class="issue-body"><div class="issue-title">No password confirmation field</div><div class="issue-detail">Standard registration has "confirm password." Without it, a typo means the user is locked out and doesn't know why.</div></div></div>
+    <div class="issue"><span class="sev minor">minor</span><div class="issue-body"><div class="issue-title">No "show password" toggle</div><div class="issue-detail">Both register and login have no eye icon to reveal password. Basic UX expectation in 2026.</div></div></div>
+    <div class="issue"><span class="sev polish">polish</span><div class="issue-body"><div class="issue-title">Logo icon is generic and unlabeled</div><div class="issue-detail">The purple icon above "Join Second Brain" looks like a balance/scale symbol. It doesn't relate to the product concept. A brain icon or custom logo mark would be far more on-brand.</div></div></div>
+    <div class="issue"><span class="sev polish">polish</span><div class="issue-body"><div class="issue-title">Large empty black background</div><div class="issue-detail">The card floats in a completely black void. Even a subtle radial gradient, a pattern, or a faint grid would elevate the first impression significantly.</div></div></div>
+    <div class="issue"><span class="sev polish">polish</span><div class="issue-body"><div class="issue-title">Label spacing inconsistency</div><div class="issue-detail">On register: "EMAIL" label is closer to the subtitle "Create your personal knowledge engine" than to its own input field. The visual grouping is wrong — labels should be tight to their field, not floating between sections.</div></div></div>
+  </div>
+</div>
+
+<!-- Login -->
+<div class="screen-section">
+  <div class="section-toggle" onclick="toggle(this)">
+    <div class="screen-title">Login screen <span class="chevron open">▶</span></div>
+  </div>
+  <div class="issues-list">
+    <div class="issue"><span class="sev major">major</span><div class="issue-body"><div class="issue-title">No "Forgot password?" link</div><div class="issue-detail">Every real app has this. Its absence will cause users to abandon if they forget credentials. Even if the feature doesn't exist yet, the link should be there as a placeholder.</div></div></div>
+    <div class="issue"><span class="sev minor">minor</span><div class="issue-body"><div class="issue-title">No error state shown</div><div class="issue-detail">What happens when wrong credentials are entered? Is there an inline error message? From the screenshot there is no error feedback visible — this needs to be verified and shown.</div></div></div>
+    <div class="issue"><span class="sev polish">polish</span><div class="issue-body"><div class="issue-title">Login card is smaller than register card</div><div class="issue-detail">The login card appears narrower and shorter than the register card. Inconsistent sizing between two closely related screens is noticeable and looks like an oversight.</div></div></div>
+  </div>
+</div>
+
+<!-- Tasks -->
+<div class="screen-section">
+  <div class="section-toggle" onclick="toggle(this)">
+    <div class="screen-title">Tasks screen <span class="chevron open">▶</span></div>
+  </div>
+  <div class="issues-list">
+    <div class="issue"><span class="sev major">major</span><div class="issue-body"><div class="issue-title">No priority or status visible on task cards</div><div class="issue-detail">Tasks "eat", "sleep", "Code" all show "Work · No due date" — no priority badge (Low/Med/High), no status chip (Todo/In Progress/Done). These fields exist in your DB but are invisible in the UI. The task list is essentially useless for prioritization.</div></div></div>
+    <div class="issue"><span class="sev major">major</span><div class="issue-body"><div class="issue-title">Delete confirmation dialog covers the task content</div><div class="issue-detail">In the delete state screenshot, the "Delete this task?" dialog sits inline inside the task card, covering the task title ("Code" is visible behind it). This is a confusing inline-overlay pattern. Should be a proper modal or a slide-in confirmation strip below the task.</div></div></div>
+    <div class="issue"><span class="sev major">major</span><div class="issue-body"><div class="issue-title">Inline edit replaces title with a bare input field</div><div class="issue-detail">When editing "Code", the title becomes a plain outlined input with no save/cancel buttons visible. User has no clear affordance to confirm or cancel the edit. Keyboard-only (Enter/Escape) is not discoverable.</div></div></div>
+    <div class="issue"><span class="sev minor">minor</span><div class="issue-body"><div class="issue-title">"3 active today" badge is misleading</div><div class="issue-detail">Tasks "eat", "sleep", "Code" all have "No due date" — how are they "active today"? The badge either counts all incomplete tasks (not "today") or the logic is wrong. Either fix the label to "3 total" or fix the due date logic.</div></div></div>
+    <div class="issue"><span class="sev minor">minor</span><div class="issue-body"><div class="issue-title">Edit and delete icons inconsistent between states</div><div class="issue-detail">In normal state: pencil icon (orange) + trash icon. In edit state: a floppy disk icon (purple/pink) + trash icon. Two different icons for "save" vs "edit" is fine, but the floppy disk looks out of place vs the clean pencil — consider a checkmark instead.</div></div></div>
+    <div class="issue"><span class="sev minor">minor</span><div class="issue-body"><div class="issue-title">No way to set due date or priority when adding a task</div><div class="issue-detail">The "Add a new task..." input is a single plain text field. No date picker, no priority selector inline or expandable. Users can only set the title. Everything else requires... the AI chat? That's not obvious.</div></div></div>
+    <div class="issue"><span class="sev polish">polish</span><div class="issue-body"><div class="issue-title">Task category shows "Work" hardcoded for all tasks</div><div class="issue-detail">Every task shows "Work" as the category. Either this is the default and can't be changed, or it's a hardcoded placeholder. If tasks can have categories, the UI should allow setting them.</div></div></div>
+    <div class="issue"><span class="sev polish">polish</span><div class="issue-body"><div class="issue-title">Checkbox has no visual feedback on hover</div><div class="issue-detail">The task completion checkbox appears flat with no hover state. A subtle color change or scale on hover would make it feel more interactive.</div></div></div>
+  </div>
+</div>
+
+<!-- Notes -->
+<div class="screen-section">
+  <div class="section-toggle" onclick="toggle(this)">
+    <div class="screen-title">Notes screen (Knowledge Base) <span class="chevron open">▶</span></div>
+  </div>
+  <div class="issues-list">
+    <div class="issue"><span class="sev critical">critical</span><div class="issue-body"><div class="issue-title">No way to create a note — the + button does nothing visible</div><div class="issue-detail">The empty state says "Create your first note with the + button." There IS a floating + button (bottom right). But you confirmed it doesn't actually open a note creation form. This is a completely broken core feature. The Knowledge Base is a read-only page right now.</div></div></div>
+    <div class="issue"><span class="sev major">major</span><div class="issue-body"><div class="issue-title">Search bar exists but there are no notes to search</div><div class="issue-detail">The search field "Search your notes, ideas, and knowledge..." is prominently displayed above the "No notes yet" empty state. A search bar in an empty state is visually confusing and should either be hidden or shown only when notes exist.</div></div></div>
+    <div class="issue"><span class="sev minor">minor</span><div class="issue-body"><div class="issue-title">Empty state icon is a generic OS emoji</div><div class="issue-detail">The "No notes yet" empty state uses what appears to be a system emoji (notepad with pen). This looks inconsistent with the premium glassmorphism design. Should be a custom SVG icon in the app's color scheme.</div></div></div>
+    <div class="issue"><span class="sev polish">polish</span><div class="issue-body"><div class="issue-title">Page title "Knowledge Base" doesn't match nav label "Notes"</div><div class="issue-detail">The nav tab says "Notes" but the page heading says "Knowledge Base." Inconsistent naming creates confusion. Pick one and use it everywhere.</div></div></div>
+  </div>
+</div>
+
+<!-- AI Chat -->
+<div class="screen-section">
+  <div class="section-toggle" onclick="toggle(this)">
+    <div class="screen-title">AI Chat screen <span class="chevron open">▶</span></div>
+  </div>
+  <div class="issues-list">
+    <div class="issue"><span class="sev critical">critical</span><div class="issue-body"><div class="issue-title">Sidebar data is static/fake — not the user's real data</div><div class="issue-detail">"Upcoming" shows "Project sync with Sarah" and "Review feedback on PR" — these are not the user's real tasks ("eat", "sleep", "Code"). "Related Note" shows "Q2 Strategy Roadmap" — no notes exist yet. "Memory Insight" shows a hardcoded quote. All three sidebar panels are fake placeholder data, not live data from the DB.</div></div></div>
+    <div class="issue"><span class="sev major">major</span><div class="issue-body"><div class="issue-title">User avatar shows "U" instead of username initial</div><div class="issue-detail">Every user message bubble shows the letter "U" as the avatar. This is clearly a placeholder — it should show the first letter of the logged-in user's username or a proper avatar.</div></div></div>
+    <div class="issue"><span class="sev major">major</span><div class="issue-body"><div class="issue-title">AI greets with "Good morning!" at 6:19 PM</div><div class="issue-detail">The first AI message says "Good morning! I've analyzed your upcoming schedule." This was sent at 6:19 PM. The time-of-day greeting logic is wrong — or the AI is using a hardcoded greeting. Should use actual server time to determine morning/afternoon/evening.</div></div></div>
+    <div class="issue"><span class="sev major">major</span><div class="issue-body"><div class="issue-title">AI claims to have "analyzed your upcoming schedule" but sidebar shows fake data</div><div class="issue-detail">The greeting implies contextual awareness of the user's real schedule. But the upcoming tasks shown are not the user's real tasks. This is a false promise to the user — the AI is presenting fabricated context as if it's real personalization.</div></div></div>
+    <div class="issue"><span class="sev minor">minor</span><div class="issue-body"><div class="issue-title">Task items in AI response show no status, priority, or due date</div><div class="issue-detail">When the AI lists tasks ("eat", "sleep"), only the title and "TASK" badge are shown. No due date, no priority, no status. These are clickable cards but they contain minimal information.</div></div></div>
+    <div class="issue"><span class="sev minor">minor</span><div class="issue-body"><div class="issue-title">"PRESS ENTER TO SEND" hint is unnecessary</div><div class="issue-detail">The text below the input field is redundant — Enter to send is a universal standard. This screen real estate could be removed or used for a character counter or a shortcut hint that's actually non-obvious.</div></div></div>
+    <div class="issue"><span class="sev minor">minor</span><div class="issue-body"><div class="issue-title">"SECOND BRAIN REASONING LAYER" label is technical jargon</div><div class="issue-detail">The small ALL-CAPS label above "AI Assistant" reads like an internal engineering term, not a user-facing label. A user doesn't need to know it's a "reasoning layer." Remove it or replace with something meaningful like "Powered by Gemini".</div></div></div>
+    <div class="issue"><span class="sev polish">polish</span><div class="issue-body"><div class="issue-title">Like/dislike buttons have no active/selected state</div><div class="issue-detail">Thumbs up and thumbs down icons appear identical whether clicked or not. There's no visual confirmation that feedback was recorded. Should fill/highlight on selection.</div></div></div>
+    <div class="issue"><span class="sev polish">polish</span><div class="issue-body"><div class="issue-title">No suggested prompt chips on empty state</div><div class="issue-detail">When the chat is empty (first load), there are no example prompts to guide new users. "Show my high priority tasks", "Summarize my notes", "What's due this week?" chips would dramatically improve first-time discoverability.</div></div></div>
+  </div>
+</div>
+
+<!-- Global -->
+<div class="screen-section">
+  <div class="section-toggle" onclick="toggle(this)">
+    <div class="screen-title">Global / navigation issues <span class="chevron open">▶</span></div>
+  </div>
+  <div class="issues-list">
+    <div class="issue"><span class="sev major">major</span><div class="issue-body"><div class="issue-title">Settings icon (gear) does nothing</div><div class="issue-detail">Top-right gear icon is present on every screen. If it opens a settings page, that wasn't shared. If it doesn't work yet — remove it. A non-functional UI element erodes trust immediately.</div></div></div>
+    <div class="issue"><span class="sev minor">minor</span><div class="issue-body"><div class="issue-title">No active page highlight consistency</div><div class="issue-detail">The active nav item uses a filled pill. But the icon + label styling varies slightly between AI (star icon, white bg pill) vs Tasks (checkbox icon) vs Notes (document icon). The icon weights and sizes look inconsistent on close inspection.</div></div></div>
+    <div class="issue"><span class="sev minor">minor</span><div class="issue-body"><div class="issue-title">Floating + button (bottom right) has no tooltip</div><div class="issue-detail">The purple sparkle/plus button bottom-right appears on Tasks and Notes screens. No tooltip on hover, no label. On the Notes screen it's the only way to create a note but the action is not working. Needs a tooltip and a working handler.</div></div></div>
+    <div class="issue"><span class="sev polish">polish</span><div class="issue-body"><div class="issue-title">No page transitions or loading states</div><div class="issue-detail">Navigating between AI, Tasks, and Notes appears to be instant hard swaps with no transition animation. A 150ms fade would make the app feel more polished.</div></div></div>
+    <div class="issue"><span class="sev polish">polish</span><div class="issue-body"><div class="issue-title">"Logout" text in top-right is very prominent</div><div class="issue-detail">The logout button with an arrow icon and full "Logout" text label sits in the primary navigation area. It's too prominent — most apps tuck logout into a profile dropdown. It makes the nav feel cluttered.</div></div></div>
+  </div>
+</div>
+
+</div>
+
+<script>
+function toggle(header) {
+  const list = header.nextElementSibling;
+  const chev = header.querySelector('.chevron');
+  list.classList.toggle('hidden');
+  chev.classList.toggle('open');
+}
+</script>

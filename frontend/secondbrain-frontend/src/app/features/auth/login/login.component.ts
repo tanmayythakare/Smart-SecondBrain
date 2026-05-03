@@ -8,17 +8,28 @@ import { Router } from '@angular/router';
 })
 export class LoginComponent {
 
-  username = '';
-  password = '';
+   username = '';
+   password = '';
+   error = '';
+   showPassword = false;
 
   constructor(private authService: AuthService,
     private router: Router
   ) {}
   ngOnInit() {
-  if (this.authService.getToken()) {
-    this.router.navigate(['/tasks']);
+    if (this.authService.getToken()) {
+      this.router.navigate(['/tasks']);
+    }
+    this.refreshIcons();
   }
-}
+
+  private refreshIcons() {
+    setTimeout(() => {
+      if ((window as any).lucide) {
+        (window as any).lucide.createIcons();
+      }
+    }, 100);
+  }
 
 
   onLogin() {
@@ -31,9 +42,11 @@ export class LoginComponent {
       }
 
       this.authService.saveToken(res.token);
+      this.authService.saveUser(this.username);
       this.router.navigate(['/tasks']);
     },
     error: (err) => {
+      this.error = err.error?.message || 'Login failed. Please check your credentials.';
       console.error('Login error', err);
     }
   });

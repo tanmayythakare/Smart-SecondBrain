@@ -1,33 +1,55 @@
-<form (ngSubmit)="onLogin()">
-  <div class="page card">
+<div class="auth-page">
+  <div class="auth-card">
+
+    <div class="auth-logo">
+      <div class="logo-circle">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .52 5.886 3 3 0 1 0 5.174 3.09" />
+        <path d="M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.52 5.886 3 3 0 1 1-5.174 3.09" />
+        <path d="M12 19V5" />
+      </svg>
+      </div>
+    </div>
+
     <h2>Welcome Back</h2>
-    
-    <div>
-      <label for="username">Username</label>
-      <input 
-        id="username"
-        type="text" 
-        [(ngModel)]="username" 
-        name="username" 
-        placeholder="Enter your username"
-        required 
-        autocomplete="username"
-      />
+    <p class="auth-subtitle">Sign in to your Second Brain</p>
+
+    <form (ngSubmit)="onLogin()">
+
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input id="username" type="text" [(ngModel)]="username" name="username" placeholder="Enter your username"
+          required autocomplete="username" />
+      </div>
+
+      <div class="form-group">
+        <div class="label-row">
+          <label for="password">Password</label>
+          <a class="forgot-link">Forgot password?</a>
+        </div>
+        <div class="input-wrapper">
+          <input id="password" [type]="showPassword ? 'text' : 'password'" [(ngModel)]="password" name="password" 
+            placeholder="••••••••" required autocomplete="current-password" />
+          <button type="button" class="toggle-password" (click)="showPassword = !showPassword">
+            <i [attr.data-lucide]="showPassword ? 'eye-off' : 'eye'"></i>
+          </button>
+        </div>
+      </div>
+
+      <div *ngIf="error" class="error-message">
+        {{ error }}
+      </div>
+
+      <button type="submit" class="auth-submit-btn">
+        Sign In
+      </button>
+
+    </form>
+
+    <div class="auth-footer">
+      <span>New to Second Brain? </span>
+      <a routerLink="/auth/register">Create an account</a>
     </div>
 
-    <div>
-      <label for="password">Password</label>
-      <input 
-        id="password"
-        type="password" 
-        [(ngModel)]="password" 
-        name="password" 
-        placeholder="Enter your password"
-        required 
-        autocomplete="current-password"
-      />
-    </div>
-
-    <button type="submit">Sign In</button>
   </div>
-</form>
+</div>
