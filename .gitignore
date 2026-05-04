@@ -10,8 +10,10 @@ backend/kill-ports.ps1
 *.log
 *.py
 test_payload.json
-scratch/
-_trash/
+
+# Documentation - Keep only screenshots
+docs/*
+!docs/screenshots/
 
 # Build and IDE
 target/
@@ -20,5 +22,7 @@ target/
 node_modules/
 dist/
 
-# Trash folder - local only
+# Local data & state - local only
 _trash/
+scratch/
+.agents/
