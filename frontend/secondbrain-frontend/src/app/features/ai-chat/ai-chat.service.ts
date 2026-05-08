@@ -20,12 +20,12 @@ export interface ChatResponse {
   providedIn: 'root'
 })
 export class AiChatService {
-  private apiUrl = `${environment.apiUrl}/ai/chat`;
+  private apiUrl = `${environment.apiUrl}/api/ai/chat`;
 
   constructor(private http: HttpClient, private authService: AuthService) {}
 
   getHistory(): Observable<any[]> {
-    const historyUrl = `${environment.apiUrl}/ai/chat/history`;
+    const historyUrl = `${environment.apiUrl}/api/ai/chat/history`;
     return this.http.get<any[]>(historyUrl);
   }
 
@@ -34,7 +34,7 @@ export class AiChatService {
   }
 
   streamMessage(message: string): Observable<string> {
-    const streamUrl = `${environment.apiUrl}/ai/chat/stream`;
+    const streamUrl = `${environment.apiUrl}/api/ai/chat/stream`;
     
     return new Observable(observer => {
       fetch(streamUrl, {
@@ -101,17 +101,17 @@ export class AiChatService {
   }
 
   submitFeedback(userQuery: string, assistantMessage: string, isPositive: boolean): Observable<any> {
-    const feedbackUrl = `${environment.apiUrl}/ai/feedback`;
+    const feedbackUrl = `${environment.apiUrl}/api/ai/feedback`;
     return this.http.post(feedbackUrl, { userQuery, assistantMessage, isPositive });
   }
 
   confirmAction(action: any): Observable<ChatResponse> {
-    const confirmUrl = `${environment.apiUrl}/ai/chat/confirm`;
+    const confirmUrl = `${environment.apiUrl}/api/ai/chat/confirm`;
     return this.http.post<ChatResponse>(confirmUrl, action);
   }
 
   getSidebarData(): Observable<any> {
-    const sidebarUrl = `${environment.apiUrl}/ai/context/sidebar`;
+    const sidebarUrl = `${environment.apiUrl}/api/ai/context/sidebar`;
     return this.http.get<any>(sidebarUrl);
   }
 }

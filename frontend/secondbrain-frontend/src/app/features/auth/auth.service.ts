@@ -13,7 +13,7 @@ interface LoginResponse {
 })
 export class AuthService {
 
-  private API_URL = `${environment.apiUrl}/auth`;
+  private API_URL = `${environment.apiUrl}/api/auth`;
 
   constructor(private http: HttpClient) {}
 

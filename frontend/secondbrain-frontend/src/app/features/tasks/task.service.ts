@@ -17,7 +17,7 @@ export interface Task {
 })
 export class TaskService {
 
-  private API_URL = `${environment.apiUrl}/tasks`;
+  private API_URL = `${environment.apiUrl}/api/tasks`;
 
   constructor(private http: HttpClient) {}
 

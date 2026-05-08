@@ -16,6 +16,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import jakarta.servlet.DispatcherType;
+import org.springframework.http.HttpMethod;
+
 
 
 @Configuration
@@ -44,6 +46,8 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
                 .dispatcherTypeMatchers(DispatcherType.ASYNC).permitAll()
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+
                 .requestMatchers(
                         "/api/test",
                     "/api/auth/register",

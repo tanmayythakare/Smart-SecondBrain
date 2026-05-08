@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://secondbrain-c9bn.onrender.com/api'
+	apiUrl: 'http://65.2.170.52:8080'
 };

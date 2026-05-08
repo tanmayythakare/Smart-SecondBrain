@@ -16,7 +16,7 @@ export interface Note {
 })
 export class NoteService {
 
-  private API_URL = `${environment.apiUrl}/notes`;
+  private API_URL = `${environment.apiUrl}/api/notes`;
 
   constructor(private http: HttpClient) { }
 
@@ -66,7 +66,7 @@ export class NoteService {
 
   // AI Assist
   assistNote(content: string, instruction: string): Observable<{result: string}> {
-    return this.http.post<{result: string}>(`${environment.apiUrl}/ai/notes/assist`, { content, instruction });
+    return this.http.post<{result: string}>(`${environment.apiUrl}/api/ai/notes/assist`, { content, instruction });
   }
 
 }
