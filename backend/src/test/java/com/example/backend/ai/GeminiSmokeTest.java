@@ -11,7 +11,7 @@ import java.util.*;
  */
 public class GeminiSmokeTest {
     public static void main(String[] args) {
-        String apiKey = "AIzaSyA-G91_18bH20QZJpuOCuYh2bstkHap6uw";
+        String apiKey = System.getenv("SPRING_AI_GOOGLE_GEMINI_API_KEY");
         String baseUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash";
         String url = baseUrl + ":generateContent?key=" + apiKey;
 
