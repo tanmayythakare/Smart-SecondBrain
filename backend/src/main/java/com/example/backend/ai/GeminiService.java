@@ -89,7 +89,6 @@ public class GeminiService {
 
     private String callGemini(String prompt) {
         String url = geminiEndpoint + geminiModel + ":generateContent?key=" + apiKey;
-
         Map<String, Object> part = Collections.singletonMap("text", prompt);
         Map<String, Object> content = new HashMap<>();
         content.put("role", "user");
