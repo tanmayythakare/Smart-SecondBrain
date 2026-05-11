@@ -18,15 +18,14 @@ public class GeminiService {
 
     private static final Logger log = LoggerFactory.getLogger(GeminiService.class);
 
-    @Value("${app.ai.gemini.key}")
+    @Value("${spring.ai.google.gemini.api-key}")
     private String apiKey;
 
-    @Value("${app.ai.gemini.model}")
+    @Value("${spring.ai.google.gemini.model}")
     private String geminiModel;
 
-    @Value("${app.ai.gemini.endpoint}")
-    private String geminiEndpoint;
-    
+    private final String geminiEndpoint = "https://generativelanguage.googleapis.com/v1beta/models/";
+
     private final RestTemplate restTemplate;
     private final WebClient webClient;
     private final ObjectMapper objectMapper;
@@ -49,14 +48,14 @@ public class GeminiService {
         Map<String, Object> content = new HashMap<>();
         content.put("role", "user");
         content.put("parts", Collections.singletonList(part));
-        
+
         Map<String, Object> requestBody = Collections.singletonMap("contents", Collections.singletonList(content));
 
         return webClient.post()
                 .uri(url)
                 .bodyValue(requestBody)
                 .retrieve()
-                .onStatus(status -> status.is4xxClientError() || status.is5xxServerError(), 
+                .onStatus(status -> status.is4xxClientError() || status.is5xxServerError(),
                     response -> response.bodyToMono(String.class)
                         .flatMap(body -> {
                             log.error("Gemini API Error Response: {}", body);
@@ -75,13 +74,13 @@ public class GeminiService {
             Map<String, Object> parsed = objectMapper.readValue(json, Map.class);
             List<Map<String, Object>> candidates = (List<Map<String, Object>>) parsed.get("candidates");
             if (candidates == null || candidates.isEmpty()) return "";
-            
+
             Map<String, Object> content = (Map<String, Object>) candidates.get(0).get("content");
             if (content == null) return "";
-            
+
             List<Map<String, Object>> parts = (List<Map<String, Object>>) content.get("parts");
             if (parts == null || parts.isEmpty()) return "";
-            
+
             return (String) parts.get(0).get("text");
         } catch (Exception e) {
             return "";
