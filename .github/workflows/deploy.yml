@@ -57,7 +57,15 @@ jobs:
               \"docker stop secondbrain-backend || true\",
               \"docker rm secondbrain-backend || true\",
               \"docker pull 392749559832.dkr.ecr.ap-south-1.amazonaws.com/secondbrain-backend:latest\",
-              \"docker run -d -p 8080:8080 --name secondbrain-backend -e SPRING_PROFILES_ACTIVE=prod -e SPRING_AI_GOOGLE_GEMINI_API_KEY=$GEMINI_KEY -e SPRING_AI_GOOGLE_GEMINI_MODEL=gemini-2.0-flash-lite -e SPRING_DATASOURCE_URL=$DB_URL -e SPRING_DATASOURCE_USERNAME=$DB_USERNAME -e SPRING_DATASOURCE_PASSWORD=$DB_PASSWORD -e APP_CORS_ALLOWED_ORIGINS=$CORS_ORIGINS 392749559832.dkr.ecr.ap-south-1.amazonaws.com/secondbrain-backend:latest\"
+              \"docker run -d -p 8080:8080 --name secondbrain-backend 
+              -e SPRING_PROFILES_ACTIVE=prod 
+              -e SPRING_AI_GOOGLE_GEMINI_API_KEY=$GEMINI_KEY 
+              -e SPRING_AI_GOOGLE_GEMINI_MODEL=gemini-2.0-flash-lite 
+              -e SPRING_DATASOURCE_URL=$DB_URL 
+              -e SPRING_DATASOURCE_USERNAME=$DB_USERNAME 
+              -e SPRING_DATASOURCE_PASSWORD=$DB_PASSWORD 
+              -e APP_CORS_ALLOWED_ORIGINS=$CORS_ORIGINS 392749559832.dkr.ecr.ap-south-1.amazonaws.com/secondbrain-backend:latest\",
+              \"docker image prune -f\"
             ]" \
             --query "Command.CommandId" \
             --output text)
