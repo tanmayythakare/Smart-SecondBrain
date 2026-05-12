@@ -10,6 +10,8 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import jakarta.annotation.PostConstruct;
+
 
 import java.util.*;
 
@@ -34,6 +36,18 @@ public class GeminiService {
         this.restTemplate = restTemplate;
         this.objectMapper = objectMapper;
         this.webClient = webClientBuilder.build();
+    }
+
+    @PostConstruct
+    public void debugGeminiConfig() {
+        String masked = apiKey == null
+                ? "NULL"
+                : (apiKey.length() > 10 ? apiKey.substring(0, 10) + "..." : "TOO_SHORT");
+
+        System.out.println("=== GEMINI DEBUG ===");
+        System.out.println("Model: " + geminiModel);
+        System.out.println("API Key: " + masked);
+        System.out.println("====================");
     }
 
     public String generate(String prompt) {
