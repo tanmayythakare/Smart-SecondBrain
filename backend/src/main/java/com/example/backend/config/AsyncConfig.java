@@ -25,6 +25,7 @@ public class AsyncConfig implements WebMvcConfigurer {
     }
 
     @Override
+
     public void configureAsyncSupport(AsyncSupportConfigurer configurer) {
         configurer.setTaskExecutor((ThreadPoolTaskExecutor) taskExecutor());
         configurer.setDefaultTimeout(60000); // 60 seconds
