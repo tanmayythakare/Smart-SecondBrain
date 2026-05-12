@@ -10,6 +10,7 @@ import org.springframework.web.client.RestTemplate;
 public class JacksonConfig {
 
     @Bean
+
     public ObjectMapper objectMapper() {
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
