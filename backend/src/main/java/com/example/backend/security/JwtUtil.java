@@ -2,10 +2,8 @@ package com.example.backend.security;
 
 import java.security.Key;
 import java.util.Date;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -16,7 +14,6 @@ public class JwtUtil {
 
     @Value("${jwt.secret:default_secret_key_for_development_purposes_only_1234567890}")
     private String secret;
-
     private final long JWT_EXPIRATION = 1000 * 60 * 60 * 24; // 24 hours
 
     private Key getSigningKey() {
