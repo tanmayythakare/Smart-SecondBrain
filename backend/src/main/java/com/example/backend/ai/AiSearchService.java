@@ -18,7 +18,6 @@ import java.util.List;
 public class AiSearchService {
 
     private final EmbeddingService embeddingService;
-
     private final NoteRepository noteRepository;
     private final TaskRepository taskRepository;
 

@@ -16,9 +16,4 @@ public class JacksonConfig {
         mapper.registerModule(new JavaTimeModule());
         return mapper;
     }
-
-    @Bean
-    public RestTemplate restTemplate() {
-        return new RestTemplate();
-    }
 }
