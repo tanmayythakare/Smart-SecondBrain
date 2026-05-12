@@ -1,4 +1,5 @@
 package com.example.backend.ai;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -6,19 +7,23 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+
 @Service
 public class EmbeddingService {
     private static final Logger log = LoggerFactory.getLogger(EmbeddingService.class);
     @Value("${spring.ai.google.gemini.api-key}")
     private String apiKey;
-    private final String baseUrl = "https://generativelanguage.googleapis.com/v1/models/text-embedding-004:embedContent";
+    private final String baseUrl = "https://generativelanguage.googleapis.com/v1beta/models/text-embedding-004:embedContent";
     private final RestTemplate restTemplate;
     private final Map<String, List<Double>> embeddingCache = new ConcurrentHashMap<>();
+
     public EmbeddingService(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
     }
+
     public List<Double> getEmbedding(String text) {
-        if (text == null || text.isBlank()) return Collections.emptyList();
+        if (text == null || text.isBlank())
+            return Collections.emptyList();
         if (embeddingCache.containsKey(text)) {
             return embeddingCache.get(text);
         }
@@ -41,8 +46,10 @@ public class EmbeddingService {
         }
         return Collections.emptyList();
     }
+
     public double calculateSimilarity(List<Double> v1, List<Double> v2) {
-        if (v1.isEmpty() || v2.isEmpty() || v1.size() != v2.size()) return 0;
+        if (v1.isEmpty() || v2.isEmpty() || v1.size() != v2.size())
+            return 0;
         double dotProduct = 0;
         double normA = 0;
         double normB = 0;
