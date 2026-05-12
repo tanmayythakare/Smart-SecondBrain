@@ -54,10 +54,10 @@
           </div>
 
           <span class="timestamp" *ngIf="msg.role === 'assistant'">
-            AI ASSISTANT • {{ msg.timestamp | date:'shortTime' | uppercase }}
+            AI ASSISTANT • {{ msg.timestamp ? (msg.timestamp | date:'shortTime') : 'Now' | uppercase }}
           </span>
           <span class="timestamp" *ngIf="msg.role === 'user'">
-            {{ msg.timestamp | date:'shortTime' }}
+            {{ msg.timestamp ? (msg.timestamp | date:'shortTime') : 'Now' }}
           </span>
           
           <div *ngIf="msg.role === 'assistant' && msg.canHaveFeedback" class="message-feedback">
