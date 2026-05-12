@@ -198,7 +198,6 @@ Visit `http://localhost:4200` — register an account and start using SecondBrai
 | POST | `/api/ai/chat/confirm` | Execute agentic action |
 
 ---
-
 ## 🧠 How the AI Works
 
 ```
@@ -229,6 +228,7 @@ DecisionEngine ─── (AI / Hybrid / Direct DB / Action)
                          Frontend renders
                          token by token
 ```
+
 
 ---
 
