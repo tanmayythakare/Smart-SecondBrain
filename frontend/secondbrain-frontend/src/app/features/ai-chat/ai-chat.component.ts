@@ -101,13 +101,18 @@ export class AiChatComponent implements OnInit, AfterViewChecked {
                 action = parsed.action || null;
               } catch (e) {}
             }
+            let timestamp = new Date(m.timestamp);
+            if (isNaN(timestamp.getTime())) {
+              timestamp = new Date();
+            }
+            
             return {
               role: m.role as 'user' | 'assistant',
               content: m.content,
               displayContent: display,
               items: items,
               action: action,
-              timestamp: new Date(m.timestamp),
+              timestamp: timestamp,
               canHaveFeedback: m.role === 'assistant'
             };
           });
@@ -203,6 +208,7 @@ export class AiChatComponent implements OnInit, AfterViewChecked {
         assistantMsg.displayContent = assistantMsg.content;
         assistantMsg.isStreaming = false;
         this.isLoading = false;
+        this.refreshIcons();
       }
     });
   }
