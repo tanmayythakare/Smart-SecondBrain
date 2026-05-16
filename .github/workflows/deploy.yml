@@ -4,7 +4,7 @@ on:
     branches:
       - main
 jobs:
-  deploy:
+  deploy-backend:
     runs-on: ubuntu-latest
     env:
       GEMINI_KEY: ${{ secrets.SPRING_AI_GOOGLE_GEMINI_API_KEY }}
@@ -66,3 +66,42 @@ jobs:
           aws ssm wait command-executed \
             --command-id $COMMAND_ID \
             --instance-id i-08c038b04f669180e
+
+  deploy-frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: |
+          cd frontend/secondbrain-frontend
+          npm ci
+
+      - name: Build Angular app
+        run: |
+          cd frontend/secondbrain-frontend
+          export NODE_OPTIONS=--openssl-legacy-provider
+          npm run build -- --configuration production
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-south-1
+
+      - name: Deploy to S3
+        run: |
+          aws s3 sync frontend/secondbrain-frontend/dist/secondbrain-frontend s3://secondbrain-frontend-tanmay --delete
+
+      - name: Invalidate CloudFront cache
+        run: |
+          aws cloudfront create-invalidation \
+            --distribution-id E2IY9L61W6PYGE \
+            --paths "/*"
