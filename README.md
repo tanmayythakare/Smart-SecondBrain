@@ -1,440 +1,365 @@
-# 🧠 SecondBrain — Personal AI Life OS
+<div align="center">
 
-![Java](https://img.shields.io/badge/Java-17-orange?style=flat-square&logo=openjdk)
-![Angular](https://img.shields.io/badge/Angular-12-red?style=flat-square&logo=angular)
-![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.4-brightgreen?style=flat-square&logo=springboot)
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-14+-blue?style=flat-square&logo=postgresql)
-![Gemini](https://img.shields.io/badge/Google%20Gemini-2.5%20Flash%20Lite-4285F4?style=flat-square&logo=google)
-![License](https://img.shields.io/badge/License-MIT-yellow?style=flat-square)
-![Deployed on AWS](https://img.shields.io/badge/Deployed-AWS-FF9900?style=flat-square&logo=amazonaws)
+# Smart-SecondBrain
 
-> AI-powered personal productivity OS with RAG-based chat, task management, and semantic notes. Built with Angular, Spring Boot, PostgreSQL, and Google Gemini.
+**AI-Augmented Personal Life OS and Knowledge Engine**
 
-### 🌐 [Live Demo →  https://d3icm4v3pyidtw.cloudfront.net](https://d3icm4v3pyidtw.cloudfront.net)
+<p align="center">
+  <a href="https://adoptium.net/"><img src="https://img.shields.io/badge/Java-17-orange?style=flat-square&logo=openjdk" alt="Java 17"></a>
+  <a href="https://spring.io/projects/spring-boot"><img src="https://img.shields.io/badge/Spring%20Boot-3.2.5-brightgreen?style=flat-square&logo=springboot" alt="Spring Boot 3.2.5"></a>
+  <a href="https://angular.dev/"><img src="https://img.shields.io/badge/Angular-12.2-red?style=flat-square&logo=angular" alt="Angular 12.2"></a>
+  <a href="https://www.postgresql.org/"><img src="https://img.shields.io/badge/PostgreSQL-14+-blue?style=flat-square&logo=postgresql" alt="PostgreSQL"></a>
+  <a href="https://ai.google.dev/"><img src="https://img.shields.io/badge/Google%20Gemini-2.5%20Flash%20Lite-4285F4?style=flat-square&logo=google" alt="Google Gemini 2.5 Flash Lite"></a>
+  <a href="https://aws.amazon.com/cloudfront/"><img src="https://img.shields.io/badge/AWS-CloudFront%20%7C%20S3-FF9900?style=flat-square&logo=amazonaws" alt="AWS CloudFront"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow?style=flat-square" alt="MIT License"></a>
+  <a href="https://d3icm4v3pyidtw.cloudfront.net"><img src="https://img.shields.io/badge/Live%20Demo-Available-8b5cf6?style=flat-square" alt="Live Demo"></a>
+</p>
 
-![AI Chat](docs/screenshots/ai_chat.png)
+<p align="center">
+  Intelligent personal productivity system with RAG contextual retrieval,<br>
+  real-time SSE token streaming, and autonomous task execution.
+</p>
 
----
+<p align="center">
+  <a href="https://d3icm4v3pyidtw.cloudfront.net">
+    <strong>Explore the Live Interactive Platform</strong>
+  </a>
+</p>
 
-## ✨ What is SecondBrain?
+<p align="center">
+  <a href="#quick-flow">Quick Flow</a> •
+  <a href="#visual-showcase">Visual Showcase</a> •
+  <a href="#system-architecture">Architecture</a> •
+  <a href="#core-architectural-engines">Core Engines</a> •
+  <a href="#getting-started">Getting Started</a> •
+  <a href="#api-endpoints">API Contract</a>
+</p>
 
-SecondBrain is a personal knowledge and task management system with a built-in AI reasoning layer. Instead of a simple chatbot, it uses **Retrieval-Augmented Generation (RAG)** to give the AI real context about your tasks and notes — so it can actually help you think, not just respond.
-
-Ask it things like:
-- *"What are my high priority tasks this week?"*
-- *"Summarize my note about Project X"*
-- *"Create a task to call John tomorrow at 5 PM"*
-
----
-
-## 🚀 Features
-
-### 🤖 AI Assistant (Gemini 2.5 Flash Lite)
-- Real-time streaming responses via **Server-Sent Events (SSE)**
-- **RAG pipeline** — AI reads your actual tasks and notes before answering
-- **Decision Engine** — routes queries intelligently (AI / Hybrid / Direct DB)
-- **Semantic search** using vector embeddings stored in PostgreSQL
-- Persistent chat history that survives server restarts
-- Agentic actions — AI can create tasks directly from chat (with confirmation)
-- Time-aware greetings (Good morning / afternoon / evening / night)
-
-### ✅ Task Management
-- Create, edit, delete tasks
-- Priority levels — Low / Medium / High with color badges
-- Due dates with overdue highlighting
-- Status lifecycle — Todo → In Progress → Done
-- "Active today" count
-
-### 📝 Knowledge Base (Notes)
-- Rich note editor with title + content
-- AI Assistant sidebar per note — Summarize, Explain, Extract actions, Improve writing
-- Semantic search across all notes
-- Auto-embedding on save for RAG retrieval
-
-### 🔐 Authentication
-- JWT-based auth with secure token storage
-- Auto-login after registration
-- Per-user data isolation — users only see their own data
-- Rate limiting on auth endpoints
-
-### 🎨 UI/UX
-- Premium **Glassmorphism** dark theme
-- Light / Dark mode toggle with OS preference detection
-- Responsive layout (desktop + tablet)
-- Real-time streaming text with typing cursor animation
-- Suggested prompt chips for new users
+</div>
 
 ---
 
-## 🛠️ Tech Stack
-
-| Layer | Technology |
-|---|---|
-| Frontend | Angular 12, TypeScript, Vanilla CSS |
-| Backend | Spring Boot 3.4, Java 17 |
-| Database | PostgreSQL (+ vector embeddings) |
-| AI | Google Gemini 2.5 Flash Lite |
-| Auth | JWT (JSON Web Tokens) |
-| Streaming | Server-Sent Events (SSE) |
-| Embeddings | Gemini Embedding API + DoubleListConverter |
-| CI/CD | GitHub Actions, Docker, AWS ECR |
-| Infrastructure | AWS (EC2, S3, CloudFront, RDS) |
-| Build | Maven, Angular CLI |
+> [!NOTE]
+> **Evolutionary Project: AI Augmentation of SecondBrain**
+> This repository is **Smart-SecondBrain**, the AI-augmented evolution of **[secondBrain](https://github.com/tanmayythakare/secondBrain)**.
+> While `secondBrain` provides the core distraction-free productivity engine with an interactive knowledge graph, `Smart-SecondBrain` introduces an intelligent reasoning layer powered by **Google Gemini 2.5 Flash Lite**, **semantic vector embeddings in PostgreSQL**, and a **Retrieval-Augmented Generation (RAG)** pipeline. For a lightweight, zero-AI variant, see **[lifeos](https://github.com/tanmayythakare/lifeos)**.
 
 ---
 
-## 📸 Screenshots
-
-| Login | Tasks |
-|---|---|
-| ![Login](docs/screenshots/login.png) | ![Tasks](docs/screenshots/tasks.png) |
-
-| Notes | Note Detail + AI |
-|---|---|
-| ![Notes](docs/screenshots/notes.png) | ![Note Detail](docs/screenshots/note_detail.png) |
-
-| AI Chat | AI Task Creation |
-|---|---|
-| ![AI Chat](docs/screenshots/ai_chat.png) | ![AI Action](docs/screenshots/ai_chat_action.png) |
-
----
-
-## 🏗️ Project Structure
+## Quick Flow
 
 ```
-secondBrain/
-├── backend/                          # Spring Boot application
-│   └── src/main/java/com/example/backend/
-│       ├── ai/                       # AI orchestration layer
-│       │   ├── AiChatService.java    # Main AI pipeline
-│       │   ├── DecisionEngineService.java  # Intent routing
-│       │   ├── ContextBuilderService.java  # RAG context assembly
-│       │   ├── GeminiService.java    # Gemini API client (SSE)
-│       │   ├── EmbeddingService.java # Vector embeddings
-│       │   ├── SafetyService.java    # Input sanitization
-│       │   ├── SemanticCacheService.java   # Response caching
-│       │   └── PromptBuilder.java    # System prompt construction
-│       ├── controller/               # REST API endpoints
-│       ├── service/                  # Business logic
-│       ├── model/                    # JPA entities
-│       ├── repository/               # Spring Data repositories
-│       ├── security/                 # JWT auth + rate limiting
-│       └── dto/                      # Data transfer objects
-│
-└── frontend/                         # Angular application
-    └── src/app/
-        ├── features/
-        │   ├── ai-chat/              # AI chat page + streaming
-        │   ├── tasks/                # Task management
-        │   ├── notes/                # Notes list + detail editor
-        │   └── auth/                 # Login + Register
-        └── core/
-            ├── guards/               # Auth route guards
-            └── interceptors/         # JWT HTTP interceptor
+User Query  →  Decision Engine  →  RAG Context Retrieval  →  Gemini 2.5 Reasoning  →  SSE Stream & Task Action
 ```
 
 ---
 
-## ☁️ Deployment Architecture
+## Visual Showcase
 
-The application is deployed on **AWS (ap-south-1 — Mumbai)** with an automated CI/CD pipeline for the backend and manual deployment for the frontend.
-
-🔗 **Live at:** [https://d3icm4v3pyidtw.cloudfront.net](https://d3icm4v3pyidtw.cloudfront.net)
-
-![Deployment Architecture](docs/screenshots/architectureDiagram.png)
-
-### AWS Services Used
-
-| Service | Region | Role |
-|---|---|---|
-| **S3** | ap-south-1 | Hosts the Angular SPA (static build files) |
-| **CloudFront** | Global (Edge) | CDN — serves frontend over HTTPS, proxies `/api/*` requests to backend |
-| **EC2** | ap-south-1 | Runs the Dockerized Spring Boot backend |
-| **RDS (PostgreSQL)** | ap-south-1 | AWS-managed relational database with vector embedding storage |
-| **ECR** | ap-south-1 | Private Docker image registry |
-| **SSM** | ap-south-1 | Triggers container restart on deploy — no SSH required |
-
-### Backend — CI/CD Pipeline (Automated)
-
-1. **Developer** pushes code to `main` branch on GitHub
-2. **GitHub Actions** automatically:
-   - Sets up JDK 17 (Temurin)
-   - Builds the Spring Boot JAR via Maven
-   - Builds a **multi-stage Docker image** (Maven build → lightweight JRE runtime — keeps the final image small and secure)
-   - Pushes the image to **AWS ECR**
-   - Injects all secrets (Gemini API key, DB credentials, CORS origins) from **GitHub Secrets** — nothing hardcoded
-3. **AWS SSM** sends a remote command to the EC2 instance to:
-   - Pull the latest image from ECR
-   - Stop and replace the running container
-   - Start the new container with production environment variables
-   - Prune old images to save disk space
-4. **Spring Boot** (in Docker on EC2) handles business logic, JWT auth, and communicates with **RDS PostgreSQL** for data and **Google Gemini API** for AI
-
-### Frontend — Manual Deployment
-
-The Angular frontend is built locally and synced to S3:
-```bash
-cd frontend/secondbrain-frontend
-ng build --configuration production
-aws s3 sync dist/secondbrain-frontend s3://your-s3-bucket --delete
-```
-**CloudFront** then serves the SPA globally over HTTPS and routes `/api/*` to the EC2 backend origin.
-
-### Docker Setup
-
-The backend uses a **multi-stage Dockerfile** to keep the production image lean:
-
-```dockerfile
-# Build stage — full Maven + JDK
-FROM maven:3.9.6-eclipse-temurin-17 AS build
-WORKDIR /app
-COPY . .
-RUN mvn clean package -DskipTests
-
-# Run stage — JRE only (no build tools)
-FROM eclipse-temurin:17-jre
-COPY --from=build /app/target/*.jar app.jar
-ENTRYPOINT ["java", "-jar", "app.jar"]
-```
-
-This produces a minimal runtime image without Maven, source code, or build artifacts — reducing image size and attack surface.
-
-> Automated deployment with minimal downtime — push to `main` and the backend is live in ~2 minutes.
+| AI Assistant with RAG Context | Agentic Task Creation Action |
+| :---: | :---: |
+| ![AI Chat](docs/screenshots/ai_chat.png) | ![AI Chat Action](docs/screenshots/ai_chat_action.png) |
+| **Priority-Tiered Task Management** | **Note Workspace with AI Copilot Sidebar** |
+| ![Tasks Priority](docs/screenshots/tasks_priority.png) | ![Note Workspace](docs/screenshots/note_detail.png) |
 
 ---
 
-## ⚙️ Getting Started
+## System Architecture
+
+### High-Level Topology
+
+```mermaid
+flowchart TD
+    Client["Browser / Angular 12.2 SPA<br/>(RxJS SSE Subscriber)"]
+
+    subgraph AWSCloud ["AWS Cloud Infrastructure (ap-south-1)"]
+        CF["CloudFront CDN Edge Distribution<br/>(HTTPS Ingress)"]
+        S3["Amazon S3 Static Bucket<br/>(Angular Production Build)"]
+        EC2["Amazon EC2 Instance<br/>(Dockerized Spring Boot 3.2.5)"]
+        RDS[("Amazon RDS PostgreSQL<br/>(Vector Embeddings & Entities)")]
+    end
+
+    subgraph IntelligenceLayer ["AI Reasoning Engine"]
+        DecisionEngine["Intelligent Query Decision Engine<br/>(AI / Hybrid / Direct DB)"]
+        RAG["RAG Retrieval Pipeline<br/>(Semantic Context Injection)"]
+        Gemini["Google Gemini 2.5 Flash Lite<br/>(LLM Reasoning & Task Extraction)"]
+    end
+
+    Client -->|"Static UI Requests"| CF
+    CF -->|"Origin Fetch"| S3
+    Client -->|"REST API / EventSource SSE"| CF
+    CF -->|"Proxy API Requests"| EC2
+    EC2 --> DecisionEngine
+    DecisionEngine --> RAG
+    RAG -->|"Vector Search"| RDS
+    RAG -->|"Augmented Prompt"| Gemini
+    Gemini -->|"Streaming Tokens"| EC2
+    EC2 -->|"SSE Real-Time Stream"| Client
+```
+
+### RAG Query & Execution Flow
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor User as User
+    participant Frontend as Angular SPA
+    participant Backend as Spring Boot API
+    participant DB as PostgreSQL
+    participant Gemini as Gemini 2.5 Flash Lite
+
+    User->>Frontend: Enters query ("What are my priority tasks?")
+    Frontend->>Backend: GET /api/ai/chat/stream?message=...
+    Backend->>Backend: Decision Engine classifies query
+    Backend->>DB: Fetch user tasks and semantic notes
+    DB-->>Backend: Return factual context
+    Backend->>Gemini: Stream prompt with injected RAG context
+    Gemini-->>Backend: Stream token chunks
+    Backend-->>Frontend: Server-Sent Events (SSE) data stream
+    Frontend-->>User: Real-time UI rendering
+    opt Action Detected (e.g. Task Creation)
+        Gemini-->>Backend: JSON Action Payload
+        Backend->>Frontend: Action Confirmation Modal
+        User->>Frontend: Confirms creation
+        Frontend->>Backend: POST /api/tasks
+        Backend->>DB: Persist newly created task
+    end
+```
+
+---
+
+## Core Architectural Engines
+
+### 01. RAG AI Assistant and Decision Engine
+* **Contextual Retrieval-Augmented Generation**: Unlike basic chatbots, the assistant queries your actual database entities and vector embeddings before prompting the model, eliminating hallucinations.
+* **Intelligent Query Classification**: Automatically evaluates user queries to route them through pure AI, direct database lookup, or hybrid RAG retrieval.
+* **Real-Time Token Streaming**: Server-Sent Events (SSE) stream tokens continuously to the Angular client for zero-latency perceptual response times.
+* **Persistent Conversation History**: Multi-turn dialogue context maintained across sessions and server restarts.
+
+### 02. Agentic Task Orchestration
+* **Conversational Task Creation**: The AI parses natural speech to propose structured tasks with due dates and priority tiers, requiring one-click confirmation before DB persistence.
+* **Priority-Tiered Lifecycle**: Tasks categorize into `LOW`, `MEDIUM`, and `HIGH` priority with color-coded badges, overdue highlights, and active-today telemetry.
+* **State Lifecycle**: Strict state progression (`TODO` ➔ `IN_PROGRESS` ➔ `DONE`).
+
+### 03. Knowledge Base and Semantic Note Intelligence
+* **Rich Markdown Editor**: Clean note authoring environment supporting title, tags, and formatting.
+* **In-Context AI Copilot**: Dedicated sidebar offering one-click actions:
+  * Summarize lengthy notes.
+  * Extract concrete action items and checklist deliverables.
+  * Explain complex topics.
+  * Polish and improve writing clarity.
+* **Automated Vector Embedding**: Notes auto-vectorize upon save for instant semantic indexing.
+
+### 04. Hardened Infrastructure and CI/CD
+* **Dual-Tier AWS Deployment**: Angular frontend hosted on Amazon S3 and distributed via CloudFront edge locations; Spring Boot backend containerized on EC2.
+* **Agentless Deployment Automation**: GitHub Actions pipeline compiles Docker images, publishes to AWS ECR, and executes rolling container redeployment via AWS Systems Manager (SSM) without opening inbound SSH ports.
+* **Stateless Security**: JWT tokens with per-user data tenancy preventing cross-account data leakage.
+
+---
+
+## Tech Stack
+
+### AI and Intelligence
+| Technology | Version | Purpose |
+| :--- | :--- | :--- |
+| **Google Gemini** | 2.5 Flash Lite | Core reasoning LLM for RAG responses and action parsing |
+| **Server-Sent Events** | SSE Protocol | Unidirectional real-time token streaming to frontend |
+| **pgvector / Embeddings** | — | Semantic vector indexing stored in PostgreSQL |
+
+### Backend
+| Technology | Version | Purpose |
+| :--- | :--- | :--- |
+| **Java** | 17 LTS | Core programming language |
+| **Spring Boot** | 3.2.5 | Application framework and dependency injection |
+| **Spring Security** | 6.x | Stateless JWT authentication and authorization |
+| **Spring Data JPA** | 3.x | Object-Relational Mapping (Hibernate) |
+| **SpringDoc OpenAPI** | 2.3.0 | Swagger UI API contract documentation |
+| **PostgreSQL** | 14+ | Relational data and vector store |
+
+### Frontend
+| Technology | Version | Purpose |
+| :--- | :--- | :--- |
+| **Angular** | 12.2 | Component-based Single Page Application framework |
+| **TypeScript** | 4.3 | Type-safe client development |
+| **RxJS** | 6.6 | Reactive EventSource SSE stream handling |
+| **CSS3** | — | Responsive modern dark theme styling |
+
+### Cloud and Delivery
+| Service | Region | Purpose |
+| :--- | :--- | :--- |
+| **AWS CloudFront** | Global Edge | CDN proxying frontend static assets and backend API |
+| **Amazon S3** | ap-south-1 | Static web asset storage |
+| **Amazon EC2** | ap-south-1 | Container runtime for backend API |
+| **Amazon ECR** | ap-south-1 | Private Docker image registry |
+| **AWS SSM** | ap-south-1 | Agentless container rollout and restart |
+| **GitHub Actions** | — | Automated continuous integration and deployment pipeline |
+
+---
+
+## Getting Started
 
 ### Prerequisites
-- Java 17+
-- Node.js 18+
-- PostgreSQL 14+
-- Google Gemini API key ([Get one free here](https://aistudio.google.com/))
+* Java 17 JDK or higher
+* Node.js 18+ (with npm)
+* PostgreSQL 14+
+* Google Gemini API key ([Google AI Studio](https://aistudio.google.com/))
 
-### 1. Clone the repo
+### 1. Clone the Repository
 ```bash
 git clone https://github.com/tanmayythakare/Smart-SecondBrain.git
-cd secondbrain
+cd Smart-SecondBrain
 ```
 
-### 2. Set up the database
+### 2. Configure the Database
 ```sql
 CREATE DATABASE secondbrain_db;
 CREATE USER secondbrain_user WITH PASSWORD 'your_password';
 GRANT ALL PRIVILEGES ON DATABASE secondbrain_db TO secondbrain_user;
 ```
 
-### 3. Configure the backend
-
-Edit `backend/src/main/resources/application.properties` or set the equivalent environment variables:
-
+### 3. Configure Backend Environment
+Set environment variables or edit `backend/src/main/resources/application.properties`:
 ```properties
 spring.datasource.url=jdbc:postgresql://localhost:5432/secondbrain_db
 spring.datasource.username=secondbrain_user
 spring.datasource.password=your_password
 
-jwt.secret=your_jwt_secret_key_here
+jwt.secret=your_super_secret_jwt_key_at_least_32_characters_long
 
 app.ai.gemini.key=your_gemini_api_key_here
 app.ai.gemini.model=gemini-2.5-flash-lite
 app.ai.gemini.endpoint=https://generativelanguage.googleapis.com/v1beta/models/
 ```
 
-#### Environment Variables Reference
-
-| Variable | Required | Description |
-|---|---|---|
-| `spring.datasource.url` | ✅ | JDBC connection string for PostgreSQL |
-| `spring.datasource.username` | ✅ | Database username |
-| `spring.datasource.password` | ✅ | Database password |
-| `jwt.secret` | ✅ | Secret key for signing JWT tokens (min 32 chars recommended) |
-| `app.ai.gemini.key` | ✅ | Google Gemini API key |
-| `app.ai.gemini.model` | ❌ | Gemini model name (default: `gemini-2.5-flash-lite`) |
-| `app.ai.gemini.endpoint` | ❌ | Gemini API base URL (default: Google's public endpoint) |
-
-> **⚠️ Never commit API keys or secrets to version control.** Use environment variables or a `.env` file excluded via `.gitignore`.
-
-### 4. Run the backend
+### 4. Run the Backend
 ```bash
 cd backend
-./mvnw spring-boot:run
+mvn spring-boot:run
 ```
-Backend runs on `http://localhost:8080`
+The backend API initializes on **http://localhost:8080**.
 
-### 5. Run the frontend
+### 5. Run the Frontend
+Open a new terminal window:
 ```bash
 cd frontend/secondbrain-frontend
 npm install
-ng serve
+npm start
 ```
-Frontend runs on `http://localhost:4200`
-
-### 6. Open the app
-Visit `http://localhost:4200` — register an account and start using SecondBrain.
+Access the application at **http://localhost:4200**.
 
 ---
 
-## 🔌 API Endpoints
+## API Endpoints
 
-| Method | Endpoint | Description |
-|---|---|---|
-| POST | `/api/auth/register` | Register new user |
-| POST | `/api/auth/login` | Login, returns JWT |
-| GET | `/api/tasks` | Get all tasks |
-| POST | `/api/tasks` | Create task |
-| PUT | `/api/tasks/{id}` | Update task |
-| DELETE | `/api/tasks/{id}` | Delete task |
-| GET | `/api/notes` | Get all notes |
-| POST | `/api/notes` | Create note |
-| PUT | `/api/notes/{id}` | Update note |
-| DELETE | `/api/notes/{id}` | Delete note |
-| GET | `/api/notes/search?q=` | Semantic search notes |
-| POST | `/api/ai/chat/stream` | AI chat (SSE stream) |
-| GET | `/api/ai/chat/history` | Get chat history |
-| POST | `/api/ai/chat/confirm` | Execute agentic action |
+### Authentication
+| Method | Endpoint | Description | Auth Required |
+| :--- | :--- | :--- | :---: |
+| `POST` | `/api/auth/register` | Register new account | No |
+| `POST` | `/api/auth/login` | Authenticate and obtain JWT token | No |
 
-> All endpoints except `/api/auth/**` require a valid JWT in the `Authorization: Bearer <token>` header.
+### AI Assistant (RAG)
+| Method | Endpoint | Description | Auth Required |
+| :--- | :--- | :--- | :---: |
+| `GET` | `/api/ai/chat/stream` | Stream real-time token response via SSE | Yes |
+| `GET` | `/api/ai/history` | Retrieve persistent conversation history | Yes |
+| `DELETE` | `/api/ai/history` | Clear user chat history | Yes |
+
+### Task Management
+| Method | Endpoint | Description | Auth Required |
+| :--- | :--- | :--- | :---: |
+| `GET` | `/api/tasks` | List all tasks for user | Yes |
+| `POST` | `/api/tasks` | Create new task | Yes |
+| `PUT` | `/api/tasks/{id}` | Update task details or status | Yes |
+| `DELETE` | `/api/tasks/{id}` | Delete task | Yes |
+
+### Knowledge Notes
+| Method | Endpoint | Description | Auth Required |
+| :--- | :--- | :--- | :---: |
+| `GET` | `/api/notes` | List all notes | Yes |
+| `POST` | `/api/notes` | Create note and trigger vectorization | Yes |
+| `PUT` | `/api/notes/{id}` | Update note | Yes |
+| `DELETE` | `/api/notes/{id}` | Delete note | Yes |
+| `POST` | `/api/notes/{id}/ai-action` | Execute AI action (summarize, extract, refine) | Yes |
 
 ---
 
-## 🧠 How the AI Works
+## Troubleshooting
+
+<details>
+<summary><strong>CORS configuration on local execution</strong></summary>
+
+Ensure the backend configuration permits origin `http://localhost:4200`. `SecurityConfig.java` allows OPTIONS preflight requests by default. If using custom ports, update allowed origins in configuration.
+</details>
+
+<details>
+<summary><strong>Gemini API rate limit or authentication errors</strong></summary>
+
+Verify that `app.ai.gemini.key` is valid and active in Google AI Studio. Check application logs for HTTP 429 (quota exceeded) or HTTP 403 (forbidden).
+</details>
+
+<details>
+<summary><strong>Client-side routing refresh in production</strong></summary>
+
+Angular Single Page Applications rely on client-side routing. On AWS CloudFront and S3, ensure error responses for 403/404 are redirected to `/index.html` with HTTP status 200.
+</details>
+
+---
+
+## Repository Structure
 
 ```
-User Message
-     │
-     ▼
-SafetyService ──── (blocks harmful input)
-     │
-     ▼
-DecisionEngine ─── (AI / Hybrid / Direct DB / Action)
-     │
-     ├── NON_AI ──► Direct DB query → instant response
-     │
-     ├── ACTION ──► Extract payload → Confirm button → Execute
-     │
-     └── AI/HYBRID ──► ContextBuilder (RAG)
-                              │
-                        ┌─────┴──────┐
-                     Recent      Semantic
-                     Items       Search
-                        └─────┬──────┘
-                              │
-                         PromptBuilder
-                              │
-                         GeminiService
-                         (SSE Stream)
-                              │
-                         Frontend renders
-                         token by token
+Smart-SecondBrain/
+├── .github/                      # CI/CD GitHub Actions workflows
+│   └── workflows/
+│       ├── deploy.yml            # Backend build, ECR push & SSM EC2 deploy
+│       └── frontend-deploy.yml   # Frontend build and S3 sync
+├── backend/                      # Spring Boot 3.2.5 REST API (Java 17)
+│   ├── src/main/java/            # Controllers, Services, Security, AI RAG Engine
+│   ├── src/main/resources/       # application.properties and schema configs
+│   ├── Dockerfile                # Multi-stage production container build
+│   └── pom.xml                   # Maven dependencies
+├── frontend/                     # Angular Single Page Application
+│   └── secondbrain-frontend/     # Angular 12.2 source, models, and components
+│       ├── src/app/              # Chat, Tasks, Notes, Auth feature modules
+│       └── package.json          # Frontend dependencies
+└── docs/
+    └── screenshots/              # Real application UI captures and architecture
 ```
 
-**Key concepts:**
-- **Decision Engine** classifies each user message into one of four routes — avoiding unnecessary AI calls for simple queries
-- **RAG (Retrieval-Augmented Generation)** pulls relevant tasks and notes into the prompt context so the AI has real, personal data to reason about
-- **Agentic Actions** let the AI propose creating tasks, with a confirmation step before execution — keeping the user in control
-- **SSE Streaming** delivers tokens in real-time for a responsive, ChatGPT-like experience
+---
+
+## Contributing
+
+1. Fork the repository.
+2. Create your feature branch:
+   ```bash
+   git checkout -b feat/your-feature-name
+   ```
+3. Commit your changes:
+   ```bash
+   git commit -m "feat: add descriptive feature summary"
+   ```
+4. Push to your branch and submit a Pull Request.
 
 ---
 
-## 🔒 Security
+## License
 
-- All endpoints (except `/api/auth/**`) require a valid JWT
-- Passwords hashed with BCrypt
-- Rate limiting on auth and AI endpoints
-- Input sanitization before AI processing
-- Per-user data isolation enforced at service layer
-- Environment variables for all secrets — no hardcoded keys in source code
-- CORS configured for frontend origin only
+This project is open-source and distributed under the **[MIT License](LICENSE)**.
 
 ---
 
-## ❓ Troubleshooting
-
-<details>
-<summary><strong>CORS errors in browser</strong></summary>
-
-Ensure the backend's CORS configuration allows your frontend origin (`http://localhost:4200` for local dev). The `SecurityConfig.java` permits OPTIONS preflight requests — if you've changed ports, update accordingly.
-</details>
-
-<details>
-<summary><strong>AI chat returns errors or empty responses</strong></summary>
-
-1. Verify your `app.ai.gemini.key` is valid at [Google AI Studio](https://aistudio.google.com/)
-2. Check backend logs for `403` or `429` (quota exceeded) responses from the Gemini API
-3. Ensure the model name in config matches an available model
-</details>
-
-<details>
-<summary><strong>Frontend 404 on page refresh (production)</strong></summary>
-
-The Angular app uses client-side routing. In production (S3/CloudFront), configure the error document to redirect to `index.html`. For hash-based routing, the app already uses `useHash: true`.
-</details>
-
-<details>
-<summary><strong>Database connection refused</strong></summary>
-
-1. Confirm PostgreSQL is running: `pg_isready -h localhost -p 5432`
-2. Verify the database and user exist with the credentials in your config
-3. Check that `pg_hba.conf` allows local connections
-</details>
-
----
-
-## 🚧 Future Improvements
-
-Things I'm planning to add next:
-
-- [ ] 📱 Progressive Web App (PWA) support for mobile
-- [ ] 🎙️ Voice input for AI chat
-- [ ] 🏷️ Tags and categories for tasks and notes
-- [ ] 📊 Dashboard with productivity analytics
-- [ ] 🔗 Multi-model support (GPT-4o, Claude, Llama)
-- [ ] 📤 Export notes as PDF / Markdown
-- [ ] 🔔 Push notifications for due tasks
-- [ ] 🐳 Docker Compose for one-command local setup
-- [ ] 🧪 Unit and integration test coverage
-- [ ] 🌐 Automated frontend CI/CD via GitHub Actions
-
----
-
-## 📋 What I Learned Building This
-
-This project was built to learn and demonstrate:
-
-- **Full-stack development** with Angular + Spring Boot
-- **AI integration** — not just calling an API, but building a proper RAG pipeline
-- **Streaming UIs** — Server-Sent Events for real-time token streaming
-- **Vector embeddings** — storing and querying semantic vectors in PostgreSQL
-- **JWT authentication** — stateless auth with Spring Security
-- **Cloud deployment** — Dockerized backend on EC2, Angular SPA on S3 + CloudFront
-- **CI/CD pipelines** — GitHub Actions for automated build, test, and deploy
-- **Production practices** — error handling, rate limiting, data isolation, environment config
-
----
-
-## 🤝 Contributing
-
-Contributions are welcome! If you'd like to improve SecondBrain:
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
----
-
-## 👤 Author
+## Author
 
 **Tanmay Thakare**
-- GitHub: [@tanmayythakare](https://github.com/tanmayythakare)
+* GitHub: [@tanmayythakare](https://github.com/tanmayythakare)
+* Email: [tanmayrthakare@gmail.com](mailto:tanmayrthakare@gmail.com)
+* LinkedIn: [Tanmay Thakare](https://www.linkedin.com/in/tanmaythakare)
 
 ---
 
-## 📄 License
-
-This project is open source and available under the [MIT License](LICENSE).
-
----
-
-<p align="center">Built with ☕ and a lot of debugging</p>
+<div align="center">
+  <a href="https://github.com/tanmayythakare">
+    <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=500&size=16&pause=2000&color=38BDF8&center=true&vCenter=true&width=360&lines=Built+by+Tanmay+Thakare+%F0%9F%90%B1" alt="Built by Tanmay Thakare 🐱" />
+  </a>
+</div>
