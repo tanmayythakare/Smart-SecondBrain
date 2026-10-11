@@ -12,7 +12,7 @@
   <a href="https://ai.google.dev/"><img src="https://img.shields.io/badge/Google%20Gemini-2.5%20Flash%20Lite-4285F4?style=flat-square&logo=google" alt="Google Gemini 2.5 Flash Lite"></a>
   <a href="https://aws.amazon.com/cloudfront/"><img src="https://img.shields.io/badge/AWS-CloudFront%20%7C%20S3-FF9900?style=flat-square&logo=amazonaws" alt="AWS CloudFront"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow?style=flat-square" alt="MIT License"></a>
-  <a href="https://d3icm4v3pyidtw.cloudfront.net"><img src="https://img.shields.io/badge/Live%20Demo-Available-8b5cf6?style=flat-square" alt="Live Demo"></a>
+  <a href="https://secondbrain.tanmayythakare.online"><img src="https://img.shields.io/badge/Live%20Demo-Available-8b5cf6?style=flat-square" alt="Live Demo"></a>
 </p>
 
 <p align="center">
@@ -21,7 +21,7 @@
 </p>
 
 <p align="center">
-  <a href="https://d3icm4v3pyidtw.cloudfront.net">
+  <a href="https://secondbrain.tanmayythakare.online">
     <strong>Explore the Live Interactive Platform</strong>
   </a>
 </p>
